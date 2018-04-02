@@ -1,100 +1,53 @@
 package com.robindrew.trading.provider.fxcm.tool;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.robindrew.common.http.Http;
 import com.robindrew.common.io.Files;
+import com.robindrew.common.lang.Args;
 
-public class FxcmPriceCandleDownloader {
+public class FxcmPriceCandleDownloader extends FxcmDownloader {
 
 	private static final Logger log = LoggerFactory.getLogger(FxcmPriceCandleDownloader.class);
 
-	private static final Set<String> AVAILABLE_INSTRUMENTS = getAvailableInstruments();
+	public static void main(String[] array) {
+		Args args = new Args(array);
 
-	private static Set<String> getAvailableInstruments() {
-		Set<String> set = new TreeSet<>();
-		set.add("AUDCAD");
-		set.add("AUDCHF");
-		set.add("AUDJPY");
-		set.add("AUDNZD");
-		set.add("CADCHF");
-		set.add("EURAUD");
-		set.add("EURCHF");
-		set.add("EURGBP");
-		set.add("EURJPY");
-		set.add("EURUSD");
-		set.add("GBPCHF");
-		set.add("GBPJPY");
-		set.add("GBPNZD");
-		set.add("GBPUSD");
-		set.add("NZDCAD");
-		set.add("NZDCHF");
-		set.add("NZDJPY");
-		set.add("NZDUSD");
-		set.add("USDCAD");
-		set.add("USDCHF");
-		set.add("USDJPY");
-		return set;
-	}
+		File outputDirectory = args.getDirectory("-d", true);
 
-	public static void main(String[] args) {
-		
 		for (String instrument : AVAILABLE_INSTRUMENTS) {
-			FxcmPriceCandleDownloader downloader = new FxcmPriceCandleDownloader(instrument);
-
-			// Initial date
-			LocalDateTime date = LocalDateTime.now();
-
-			while (downloader.downloadYear(date)) {
-				date = date.minusYears(1);
-			}
+			FxcmPriceCandleDownloader downloader = new FxcmPriceCandleDownloader(outputDirectory);
+			downloader.downloadAll(instrument);
 		}
 	}
 
-	private final String instrument;
 	private String interval = "m1";
 
-	public FxcmPriceCandleDownloader(String instrument) {
-		this.instrument = instrument;
+	public FxcmPriceCandleDownloader(File outputDirectory) {
+		super(outputDirectory);
 	}
 
-	public boolean downloadYear(LocalDateTime date) {
-		int count = 0;
-		int year = date.getYear();
-		for (int week = 1; week < 53; week++) {
+	protected boolean downloadToFile(String instrument, int year, int week, File file) {
+		String url = createUrl(instrument, year, week);
 
-			File dir = new File("c:/temp/fxcm/" + interval + "/" + instrument);
-			dir.mkdirs();
-			File file = new File(dir, year + "-" + week + ".csv.gz");
-			if (file.exists()) {
-				count++;
-				continue;
-			}
+		log.info("Downloading {}", url);
+		byte[] content = Http.getBytes(url);
 
-			try {
-				String url = createUrl(interval, year, week);
-
-				log.info("Downloading {}", url);
-				byte[] content = Http.getBytes(url);
-				count++;
-
-				Files.writeFromBytes(file, content);
-
-			} catch (Exception e) {
-				log.warn("Failed to download year=" + year + ", week=" + week, e);
-				break;
-			}
-		}
-		return count > 0;
+		Files.writeFromBytes(file, content);
+		return true;
 	}
 
-	private String createUrl(String interval, int year, int week) {
+	protected File getOutputFile(String instrument, int year, int week) {
+		File dir = new File(getOutputDirectory(), interval + "/" + instrument);
+		dir.mkdirs();
+		File file = new File(dir, year + "-" + week + ".csv.gz");
+		return file;
+	}
+
+	private String createUrl(String instrument, int year, int week) {
 		StringBuilder url = new StringBuilder();
 		url.append("https://candledata.fxcorporate.com/");
 		url.append(interval);
