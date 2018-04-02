@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/integration/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/log4j-over-slf4j/log4j-over-slf4j-1.7.25.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" sourcepath="MAVEN_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25-sources.jar"/>
@@ -9,5 +11,7 @@
 	<classpathentry kind="var" path="MAVEN_REPO/org/apache/commons/commons-lang3/3.7/commons-lang3-3.7.jar" sourcepath="MAVEN_REPO/org/apache/commons/commons-lang3/3.7/commons-lang3-3.7-sources.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robindrew-common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/robindrew-trading"/>
+	<classpathentry kind="lib" path="lib/fxcm-api.jar"/>
+	<classpathentry kind="lib" path="lib/fxmsg.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
