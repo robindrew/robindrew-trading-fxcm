@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.data;
+package com.robindrew.trading.provider.fxcm.data.tick;
 
 import java.io.File;
 
