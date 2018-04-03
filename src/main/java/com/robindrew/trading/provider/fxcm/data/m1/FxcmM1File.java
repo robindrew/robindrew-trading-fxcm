@@ -40,14 +40,6 @@ public class FxcmM1File {
 
 	private static final Logger log = LoggerFactory.getLogger(FxcmM1File.class);
 
-	public static void main(String[] args) {
-
-		File file = new File("C:\\development\\data\\FXCM\\m1\\GBPUSD\\2012-1.csv.gz");
-
-		FxcmInstrument instrument = FxcmInstrument.GBPUSD;
-		new FxcmM1File(file, instrument).readToList();
-	}
-
 	private static DateTimeFormatter DATE_FORMAT = ofPattern("MM/dd/yyyy");
 	private static DateTimeFormatter TIME_FORMAT = ofPattern("HH:mm:ss.SSS");
 
@@ -68,7 +60,7 @@ public class FxcmM1File {
 	}
 
 	public List<IPriceCandle> readToList() {
-		log.info("Reading ticks from {}", file.getName());
+		log.info("Reading candles from {}", file.getName());
 		Stopwatch timer = Stopwatch.createStarted();
 		try (FileInputStream fileInput = new FileInputStream(file)) {
 			InputStream input = fileInput;
@@ -81,7 +73,7 @@ public class FxcmM1File {
 			// Read candles
 			List<IPriceCandle> list = readToList(input);
 			timer.stop();
-			log.info("Read {} ticks from {} in {}", Strings.number(list), file.getName(), timer);
+			log.info("Read {} candles from {} in {}", Strings.number(list), file.getName(), timer);
 			return list;
 
 		} catch (Exception e) {
@@ -97,7 +89,6 @@ public class FxcmM1File {
 			if (line == null) {
 				break;
 			}
-			System.err.println(line);
 
 			IPriceCandle candle = parsePriceCandle(line);
 			if (candle != null) {
@@ -135,10 +126,9 @@ public class FxcmM1File {
 		BigDecimal askLow = new BigDecimal(tokenizer.next(false));
 		BigDecimal askClose = new BigDecimal(tokenizer.next(false));
 
-		
 		int openPrice = parsePrice(bidOpen, askOpen, decimalPlaces);
-		int lowPrice = parsePrice(bidHigh, askHigh, decimalPlaces);
-		int highPrice = parsePrice(bidLow, askLow, decimalPlaces);
+		int highPrice = parsePrice(bidHigh, askHigh, decimalPlaces);
+		int lowPrice = parsePrice(bidLow, askLow, decimalPlaces);
 		int closePrice = parsePrice(bidClose, askClose, decimalPlaces);
 
 		return new PriceCandle(openPrice, highPrice, lowPrice, closePrice, openTime, closeTime, decimalPlaces);
