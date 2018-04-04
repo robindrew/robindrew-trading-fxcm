@@ -68,10 +68,6 @@ public class FxcmM1FileConverter {
 		}
 	}
 
-	public void convertInstrument(FxcmInstrument instrument, File file, File outputDir) {
-
-	}
-
 	private static class YearWeekComparator implements Comparator<File> {
 
 		@Override
