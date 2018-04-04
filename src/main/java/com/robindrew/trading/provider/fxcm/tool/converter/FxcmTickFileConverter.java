@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.data.m1;
+package com.robindrew.trading.provider.fxcm.tool.converter;
 
 import static com.robindrew.trading.provider.TradeDataProvider.FXCM;
 
@@ -12,27 +12,28 @@ import org.slf4j.LoggerFactory;
 
 import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
-import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
-import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
-import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
-import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
+import com.robindrew.trading.price.tick.IPriceTick;
+import com.robindrew.trading.price.tick.format.ptf.source.file.PtfFileStreamSink;
+import com.robindrew.trading.price.tick.io.list.sink.IPriceTickListSink;
+import com.robindrew.trading.price.tick.io.list.sink.PriceTickListToStreamSink;
 import com.robindrew.trading.provider.fxcm.FxcmInstrument;
+import com.robindrew.trading.provider.fxcm.data.tick.FxcmTickFile;
 
-public class FxcmM1FileConverter {
+public class FxcmTickFileConverter {
 
-	private static final Logger log = LoggerFactory.getLogger(FxcmM1FileConverter.class);
+	private static final Logger log = LoggerFactory.getLogger(FxcmTickFileConverter.class);
 
 	public static void main(String[] array) {
 		Args args = new Args(array);
 
-		// The input directory containing FXCM M1 files 
+		// The input directory containing FXCM Tick files
 		File inputDir = args.getDirectory("-i", true);
 
-		// The output directory for writing PCF files 
+		// The output directory for writing PCF files
 		File outputDir = args.getDirectory("-o", true);
 
-		FxcmM1FileConverter converter = new FxcmM1FileConverter();
+		FxcmTickFileConverter converter = new FxcmTickFileConverter();
 		converter.convertInstruments(inputDir, outputDir);
 	}
 
@@ -53,7 +54,7 @@ public class FxcmM1FileConverter {
 		File directory = PcfFileManager.getDirectory(FXCM, instrument, outputDir);
 		directory.mkdirs();
 
-		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PcfFileStreamSink(directory))) {
+		try (IPriceTickListSink sink = new PriceTickListToStreamSink(new PtfFileStreamSink(directory))) {
 
 			// List and sort the files
 			List<File> files = Files.listFiles(inputDir, false);
@@ -62,8 +63,8 @@ public class FxcmM1FileConverter {
 			for (File file : files) {
 				log.info("Converting File: {}", file);
 
-				List<IPriceCandle> candles = new FxcmM1File(file, instrument).readToList();
-				sink.putNextCandles(candles);
+				List<IPriceTick> ticks = new FxcmTickFile(file, instrument).readToList();
+				sink.putNextTicks(ticks);
 			}
 		}
 	}

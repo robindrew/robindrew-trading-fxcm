@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.tool;
+package com.robindrew.trading.provider.fxcm.tool.downloader;
 
 import java.io.File;
 
