@@ -33,7 +33,7 @@ import com.robindrew.common.util.Java;
 import com.robindrew.trading.price.Mid;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
-import com.robindrew.trading.price.candle.format.pcf.FloatingPoint;
+import com.robindrew.trading.price.decimal.Decimals;
 import com.robindrew.trading.provider.fxcm.FxcmInstrument;
 
 public class FxcmM1File {
@@ -135,8 +135,8 @@ public class FxcmM1File {
 	}
 
 	private int parsePrice(BigDecimal bid, BigDecimal ask, int decimalPlaces) {
-		int bidPrice = FloatingPoint.toBigInt(bid, decimalPlaces);
-		int askPrice = FloatingPoint.toBigInt(ask, decimalPlaces);
+		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
+		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
 		return Mid.getMid(bidPrice, askPrice);
 	}
 

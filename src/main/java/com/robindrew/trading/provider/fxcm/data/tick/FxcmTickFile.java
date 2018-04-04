@@ -29,7 +29,7 @@ import com.robindrew.common.text.Strings;
 import com.robindrew.common.text.tokenizer.CharDelimiters;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.common.util.Java;
-import com.robindrew.trading.price.candle.format.pcf.FloatingPoint;
+import com.robindrew.trading.price.decimal.Decimals;
 import com.robindrew.trading.price.tick.IPriceTick;
 import com.robindrew.trading.price.tick.PriceTick;
 import com.robindrew.trading.provider.fxcm.FxcmInstrument;
@@ -115,8 +115,8 @@ public class FxcmTickFile {
 		BigDecimal bid = new BigDecimal(tokenizer.next(false));
 		BigDecimal ask = new BigDecimal(tokenizer.next(false));
 
-		int bidPrice = FloatingPoint.toBigInt(bid, decimalPlaces);
-		int askPrice = FloatingPoint.toBigInt(ask, decimalPlaces);
+		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
+		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
 
 		return new PriceTick(bidPrice, askPrice, timestamp, decimalPlaces);
 	}
