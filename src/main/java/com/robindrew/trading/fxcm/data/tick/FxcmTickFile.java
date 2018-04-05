@@ -1,6 +1,5 @@
-package com.robindrew.trading.provider.fxcm.data.m1;
+package com.robindrew.trading.fxcm.data.tick;
 
-import static com.robindrew.trading.price.candle.interval.TimeUnitInterval.ONE_MINUTE;
 import static java.time.format.DateTimeFormatter.ofPattern;
 
 import java.io.BufferedReader;
@@ -30,15 +29,14 @@ import com.robindrew.common.text.Strings;
 import com.robindrew.common.text.tokenizer.CharDelimiters;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.common.util.Java;
-import com.robindrew.trading.price.Mid;
-import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.PriceCandle;
+import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.price.decimal.Decimals;
-import com.robindrew.trading.provider.fxcm.FxcmInstrument;
+import com.robindrew.trading.price.tick.IPriceTick;
+import com.robindrew.trading.price.tick.PriceTick;
 
-public class FxcmM1File {
+public class FxcmTickFile {
 
-	private static final Logger log = LoggerFactory.getLogger(FxcmM1File.class);
+	private static final Logger log = LoggerFactory.getLogger(FxcmTickFile.class);
 
 	private static DateTimeFormatter DATE_FORMAT = ofPattern("MM/dd/yyyy");
 	private static DateTimeFormatter TIME_FORMAT = ofPattern("HH:mm:ss.SSS");
@@ -52,15 +50,15 @@ public class FxcmM1File {
 	private final File file;
 	private final FxcmInstrument instrument;
 	/** Apparently they used UTF16 little endian. I wonder why? */
-	private Charset charset = Charsets.UTF_8;
+	private Charset charset = Charsets.UTF_16LE;
 
-	public FxcmM1File(File file, FxcmInstrument instrument) {
+	public FxcmTickFile(File file, FxcmInstrument instrument) {
 		this.file = file;
 		this.instrument = instrument;
 	}
 
-	public List<IPriceCandle> readToList() {
-		log.info("Reading candles from {}", file.getName());
+	public List<IPriceTick> readToList() {
+		log.info("Reading ticks from {}", file.getName());
 		Stopwatch timer = Stopwatch.createStarted();
 		try (FileInputStream fileInput = new FileInputStream(file)) {
 			InputStream input = fileInput;
@@ -71,9 +69,9 @@ public class FxcmM1File {
 			}
 
 			// Read candles
-			List<IPriceCandle> list = readToList(input);
+			List<IPriceTick> list = readToList(input);
 			timer.stop();
-			log.info("Read {} candles from {} in {}", Strings.number(list), file.getName(), timer);
+			log.info("Read {} ticks from {} in {}", Strings.number(list), file.getName(), timer);
 			return list;
 
 		} catch (Exception e) {
@@ -81,8 +79,8 @@ public class FxcmM1File {
 		}
 	}
 
-	private List<IPriceCandle> readToList(InputStream input) throws IOException {
-		List<IPriceCandle> list = new ArrayList<>();
+	private List<IPriceTick> readToList(InputStream input) throws IOException {
+		List<IPriceTick> list = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input, charset));
 		while (true) {
 			String line = reader.readLine();
@@ -90,16 +88,16 @@ public class FxcmM1File {
 				break;
 			}
 
-			IPriceCandle candle = parsePriceCandle(line);
-			if (candle != null) {
-				list.add(candle);
+			IPriceTick tick = parsePriceTick(line);
+			if (tick != null) {
+				list.add(tick);
 			}
 		}
 
 		return list;
 	}
 
-	private IPriceCandle parsePriceCandle(String line) {
+	private IPriceTick parsePriceTick(String line) {
 		line = line.trim();
 		if (line.isEmpty() || line.startsWith("DateTime")) {
 			return null;
@@ -111,33 +109,16 @@ public class FxcmM1File {
 		// Dates
 		LocalDate date = LocalDate.parse(tokenizer.next(false), DATE_FORMAT);
 		LocalTime time = LocalTime.parse(tokenizer.next(false), TIME_FORMAT);
-		long openTime = toMillis(LocalDateTime.of(date, time));
-		long closeTime = openTime + ONE_MINUTE.getIntervalInMillis();
+		long timestamp = toMillis(LocalDateTime.of(date, time));
 
-		// Bid
-		BigDecimal bidOpen = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidHigh = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidLow = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidClose = new BigDecimal(tokenizer.next(false));
+		// Prices
+		BigDecimal bid = new BigDecimal(tokenizer.next(false));
+		BigDecimal ask = new BigDecimal(tokenizer.next(false));
 
-		// Ask
-		BigDecimal askOpen = new BigDecimal(tokenizer.next(false));
-		BigDecimal askHigh = new BigDecimal(tokenizer.next(false));
-		BigDecimal askLow = new BigDecimal(tokenizer.next(false));
-		BigDecimal askClose = new BigDecimal(tokenizer.next(false));
-
-		int openPrice = parsePrice(bidOpen, askOpen, decimalPlaces);
-		int highPrice = parsePrice(bidHigh, askHigh, decimalPlaces);
-		int lowPrice = parsePrice(bidLow, askLow, decimalPlaces);
-		int closePrice = parsePrice(bidClose, askClose, decimalPlaces);
-
-		return new PriceCandle(openPrice, highPrice, lowPrice, closePrice, openTime, closeTime, decimalPlaces);
-	}
-
-	private int parsePrice(BigDecimal bid, BigDecimal ask, int decimalPlaces) {
 		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
 		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
-		return Mid.getMid(bidPrice, askPrice);
+
+		return new PriceTick(bidPrice, askPrice, timestamp, decimalPlaces);
 	}
 
 }

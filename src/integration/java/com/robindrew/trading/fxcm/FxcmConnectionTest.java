@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm;
+package com.robindrew.trading.fxcm;
 
 import org.junit.Test;
 

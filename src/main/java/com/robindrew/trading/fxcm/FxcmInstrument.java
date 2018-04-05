@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm;
+package com.robindrew.trading.fxcm;
 
 import static com.robindrew.trading.Instruments.AUD_CAD;
 import static com.robindrew.trading.Instruments.AUD_CHF;

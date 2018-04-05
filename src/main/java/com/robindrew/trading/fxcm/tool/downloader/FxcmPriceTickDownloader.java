@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.tool.downloader;
+package com.robindrew.trading.fxcm.tool.downloader;
 
 import java.io.File;
 
@@ -9,9 +9,9 @@ import com.robindrew.common.http.Http;
 import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
 
-public class FxcmPriceCandleDownloader extends FxcmDownloader {
+public class FxcmPriceTickDownloader extends FxcmDownloader {
 
-	private static final Logger log = LoggerFactory.getLogger(FxcmPriceCandleDownloader.class);
+	private static final Logger log = LoggerFactory.getLogger(FxcmPriceTickDownloader.class);
 
 	public static void main(String[] array) {
 		Args args = new Args(array);
@@ -19,14 +19,14 @@ public class FxcmPriceCandleDownloader extends FxcmDownloader {
 		File outputDirectory = args.getDirectory("-d", true);
 
 		for (String instrument : AVAILABLE_INSTRUMENTS) {
-			FxcmPriceCandleDownloader downloader = new FxcmPriceCandleDownloader(outputDirectory);
+			FxcmPriceTickDownloader downloader = new FxcmPriceTickDownloader(outputDirectory);
 			downloader.downloadAll(instrument);
 		}
 	}
 
-	private String interval = "m1";
+	private String interval = "tick";
 
-	public FxcmPriceCandleDownloader(File outputDirectory) {
+	public FxcmPriceTickDownloader(File outputDirectory) {
 		super(outputDirectory);
 	}
 
@@ -49,9 +49,7 @@ public class FxcmPriceCandleDownloader extends FxcmDownloader {
 
 	private String createUrl(String instrument, int year, int week) {
 		StringBuilder url = new StringBuilder();
-		url.append("https://candledata.fxcorporate.com/");
-		url.append(interval);
-		url.append("/");
+		url.append("https://tickdata.fxcorporate.com/");
 		url.append(instrument);
 		url.append("/");
 		url.append(year);

@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.tool.downloader;
+package com.robindrew.trading.fxcm.tool.downloader;
 
 import java.io.File;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.robindrew.trading.provider.fxcm.tool.converter;
+package com.robindrew.trading.fxcm.tool.converter;
 
 import static com.robindrew.trading.provider.TradeDataProvider.FXCM;
 
@@ -12,13 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
+import com.robindrew.trading.fxcm.FxcmInstrument;
+import com.robindrew.trading.fxcm.data.m1.FxcmM1File;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
 import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
 import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
-import com.robindrew.trading.provider.fxcm.FxcmInstrument;
-import com.robindrew.trading.provider.fxcm.data.m1.FxcmM1File;
 
 public class FxcmM1FileConverter {
 
