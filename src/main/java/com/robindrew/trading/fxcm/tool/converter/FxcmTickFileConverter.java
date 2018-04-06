@@ -52,6 +52,10 @@ public class FxcmTickFileConverter {
 
 		// Output directory
 		File directory = PcfFileManager.getDirectory(FXCM, instrument, outputDir);
+		if (directory.exists()) {
+			log.info("Output directory already exists, skipping: {}", directory);
+			return;
+		}
 		directory.mkdirs();
 
 		try (IPriceTickListSink sink = new PriceTickListToStreamSink(new PtfFileStreamSink(directory))) {
