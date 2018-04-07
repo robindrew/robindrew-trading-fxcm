@@ -13,12 +13,14 @@ import org.slf4j.LoggerFactory;
 import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
 import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.fxcm.data.tick.FxcmTickFile;
+import com.robindrew.trading.fxcm.line.FxcmTickLineParser;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
 import com.robindrew.trading.price.tick.IPriceTick;
 import com.robindrew.trading.price.tick.format.ptf.source.file.PtfFileStreamSink;
 import com.robindrew.trading.price.tick.io.list.sink.IPriceTickListSink;
 import com.robindrew.trading.price.tick.io.list.sink.PriceTickListToStreamSink;
+import com.robindrew.trading.price.tick.line.parser.IPriceTickLineParser;
+import com.robindrew.trading.price.tick.line.parser.PriceTickLineFile;
 
 public class FxcmTickFileConverter {
 
@@ -67,7 +69,8 @@ public class FxcmTickFileConverter {
 			for (File file : files) {
 				log.info("Converting File: {}", file);
 
-				List<IPriceTick> ticks = new FxcmTickFile(file, instrument).readToList();
+				IPriceTickLineParser parser = new FxcmTickLineParser(instrument);
+				List<IPriceTick> ticks = new PriceTickLineFile(file, parser).toList();
 				sink.putNextTicks(ticks);
 			}
 		}

@@ -13,12 +13,14 @@ import org.slf4j.LoggerFactory;
 import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
 import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.fxcm.data.m1.FxcmM1File;
+import com.robindrew.trading.fxcm.line.FxcmCandleLineParser;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
 import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
 import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
+import com.robindrew.trading.price.candle.line.parser.IPriceCandleLineParser;
+import com.robindrew.trading.price.candle.line.parser.PriceCandleLineFile;
 
 public class FxcmM1FileConverter {
 
@@ -27,10 +29,10 @@ public class FxcmM1FileConverter {
 	public static void main(String[] array) {
 		Args args = new Args(array);
 
-		// The input directory containing FXCM M1 files 
+		// The input directory containing FXCM M1 files
 		File inputDir = args.getDirectory("-i", true);
 
-		// The output directory for writing PCF files 
+		// The output directory for writing PCF files
 		File outputDir = args.getDirectory("-o", true);
 
 		FxcmM1FileConverter converter = new FxcmM1FileConverter();
@@ -63,7 +65,8 @@ public class FxcmM1FileConverter {
 			for (File file : files) {
 				log.info("Converting File: {}", file);
 
-				List<IPriceCandle> candles = new FxcmM1File(file, instrument).readToList();
+				IPriceCandleLineParser parser = new FxcmCandleLineParser(instrument);
+				List<IPriceCandle> candles = new PriceCandleLineFile(file, parser).toList();
 				sink.putNextCandles(candles);
 			}
 		}
