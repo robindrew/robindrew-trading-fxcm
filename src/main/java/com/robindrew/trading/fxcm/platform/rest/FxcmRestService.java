@@ -1,8 +1,8 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
+import java.lang.reflect.Field;
 import java.util.Enumeration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +22,19 @@ import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
-import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 
 public class FxcmRestService implements IFxcmRestService {
+
+	public static void main(String[] args) {
+		System.out.println(System.currentTimeMillis());
+	}
 
 	private static final Logger log = LoggerFactory.getLogger(FxcmRestService.class);
 
 	private final IFxcmSession session;
 	private final IGateway gateway;
+	private final TransportableCache cache = new TransportableCache();
 	private final ResponseListener responseListener = new ResponseListener();
 	private final StatusListener statusListener = new StatusListener();
 
@@ -54,14 +58,17 @@ public class FxcmRestService implements IFxcmRestService {
 			String configFile = null;
 
 			FXCMLoginProperties properties = new FXCMLoginProperties(username, password, station, server, configFile);
+
+			log.info("[User] {}", username);
+			log.info("[Station] {}", station);
+			log.info("[Server] {}", server);
+
+			// Login!
 			log.info("Logging in ...");
 			Stopwatch timer = Stopwatch.createStarted();
 			gateway.login(properties);
 			timer.stop();
 			log.info("Logged in ({})", timer);
-			log.info("[User] {}", username);
-			log.info("[Station] {}", station);
-			log.info("[Server] {}", server);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -72,13 +79,13 @@ public class FxcmRestService implements IFxcmRestService {
 		gateway.logout();
 	}
 
-	public TradingSessionStatus getTradingSessionStatus() {
+	public Future<TradingSessionStatus> getTradingSessionStatus() {
 		String requestId = gateway.requestTradingSessionStatus();
-		return (TradingSessionStatus) responseListener.getResponse(requestId);
+		return cache.get(requestId);
 	}
 
 	@SuppressWarnings("unchecked")
-	public MarketDataSnapshot getMarketDataSnapshot(TradingSessionStatus status) {
+	public Future<MarketDataSnapshot> getMarketDataSnapshot(TradingSessionStatus status) {
 		try {
 
 			MarketDataRequest marketData = new MarketDataRequest();
@@ -92,7 +99,7 @@ public class FxcmRestService implements IFxcmRestService {
 			marketData.setMDEntryTypeSet(MarketDataRequest.MDENTRYTYPESET_TICKALL);
 			String requestId = gateway.sendMessage(marketData);
 
-			return (MarketDataSnapshot) responseListener.getResponse(requestId);
+			return cache.get(requestId);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -101,50 +108,47 @@ public class FxcmRestService implements IFxcmRestService {
 
 	private class ResponseListener implements IGenericMessageListener {
 
-		private final ConcurrentMap<String, ITransportable> responseMap = new ConcurrentHashMap<>();
+		private final Logger log = LoggerFactory.getLogger(ResponseListener.class);
 
 		@Override
 		public void messageArrived(ITransportable message) {
 			try {
-				// log.info("RequestID: {}", message.getRequestID());
-				// log.info("TradingSessionID: {}", message.getTradingSessionID());
-				// log.info("TradingSessionSubID: {}", message.getTradingSessionSubID());
-				// log.info("Type: {}", message.getType());
-				// log.info("Message: {}", message);
 
-				if (message instanceof MarketDataSnapshot) {
-					MarketDataSnapshot snapshot = (MarketDataSnapshot) message;
-					String symbol = snapshot.getInstrument().getSymbol();
-					if (symbol.equals("EUR/USD")) {
-						log.info(symbol + ", bid=" + snapshot.getBidClose() + ", ask=" + snapshot.getAskClose());
-					}
-				}
-
+				// Is this message a request/response
 				String requestId = message.getRequestID();
 				if (requestId != null) {
-					responseMap.put(requestId, message);
+					log.debug("messageArrived(requestId={})", requestId);
+					cache.put(requestId, message);
+					return;
 				}
+
+				// Handle snapshots (ticking prices)
+				if (message instanceof MarketDataSnapshot) {
+					MarketDataSnapshot snapshot = (MarketDataSnapshot) message;
+
+					for (Field field : MarketDataSnapshot.class.getDeclaredFields()) {
+						field.setAccessible(true);
+						System.out.println(field.getName() + " = " + field.get(snapshot));
+					}
+					System.out.println();
+					return;
+				}
+
+				log.warn("Message not handled: " + message);
+
 			} catch (Exception e) {
 				throw Java.propagate(e);
-			}
-		}
-
-		public ITransportable getResponse(String requestId) {
-			while (true) {
-				ITransportable response = responseMap.get(requestId);
-				if (response != null) {
-					return response;
-				}
-				Threads.sleep(50);
 			}
 		}
 	}
 
 	private class StatusListener implements IStatusMessageListener {
 
+		private final Logger log = LoggerFactory.getLogger(FxcmRestService.StatusListener.class);
+
 		@Override
 		public void messageArrived(ISessionStatus message) {
-			log.info("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
+			log.debug("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
 		}
 	}
 

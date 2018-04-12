@@ -30,9 +30,9 @@ import com.robindrew.common.text.tokenizer.CharDelimiters;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
+import com.robindrew.trading.price.candle.ITickPriceCandle;
+import com.robindrew.trading.price.candle.TickPriceCandle;
 import com.robindrew.trading.price.decimal.Decimals;
-import com.robindrew.trading.price.tick.IPriceTick;
-import com.robindrew.trading.price.tick.PriceTick;
 
 public class FxcmTickFile {
 
@@ -57,7 +57,7 @@ public class FxcmTickFile {
 		this.instrument = instrument;
 	}
 
-	public List<IPriceTick> readToList() {
+	public List<ITickPriceCandle> readToList() {
 		log.info("Reading ticks from {}", file.getName());
 		Stopwatch timer = Stopwatch.createStarted();
 		try (FileInputStream fileInput = new FileInputStream(file)) {
@@ -69,7 +69,7 @@ public class FxcmTickFile {
 			}
 
 			// Read candles
-			List<IPriceTick> list = readToList(input);
+			List<ITickPriceCandle> list = readToList(input);
 			timer.stop();
 			log.info("Read {} ticks from {} in {}", Strings.number(list), file.getName(), timer);
 			return list;
@@ -79,8 +79,8 @@ public class FxcmTickFile {
 		}
 	}
 
-	private List<IPriceTick> readToList(InputStream input) throws IOException {
-		List<IPriceTick> list = new ArrayList<>();
+	private List<ITickPriceCandle> readToList(InputStream input) throws IOException {
+		List<ITickPriceCandle> list = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input, charset));
 		while (true) {
 			String line = reader.readLine();
@@ -88,7 +88,7 @@ public class FxcmTickFile {
 				break;
 			}
 
-			IPriceTick tick = parsePriceTick(line);
+			ITickPriceCandle tick = parsePriceTick(line);
 			if (tick != null) {
 				list.add(tick);
 			}
@@ -97,7 +97,7 @@ public class FxcmTickFile {
 		return list;
 	}
 
-	private IPriceTick parsePriceTick(String line) {
+	private ITickPriceCandle parsePriceTick(String line) {
 		line = line.trim();
 		if (line.isEmpty() || line.startsWith("DateTime")) {
 			return null;
@@ -118,7 +118,7 @@ public class FxcmTickFile {
 		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
 		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
 
-		return new PriceTick(bidPrice, askPrice, timestamp, decimalPlaces);
+		return new TickPriceCandle(bidPrice, askPrice, timestamp, decimalPlaces);
 	}
 
 }

@@ -7,13 +7,13 @@ import java.time.LocalTime;
 
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.trading.fxcm.FxcmInstrument;
+import com.robindrew.trading.price.candle.IPriceCandle;
+import com.robindrew.trading.price.candle.TickPriceCandle;
+import com.robindrew.trading.price.candle.line.parser.IPriceCandleLineParser;
 import com.robindrew.trading.price.decimal.Decimals;
 import com.robindrew.trading.price.precision.IPricePrecision;
-import com.robindrew.trading.price.tick.IPriceTick;
-import com.robindrew.trading.price.tick.PriceTick;
-import com.robindrew.trading.price.tick.line.parser.IPriceTickLineParser;
 
-public class FxcmTickLineParser extends FxcmLineParser implements IPriceTickLineParser {
+public class FxcmTickLineParser extends FxcmLineParser implements IPriceCandleLineParser {
 
 	public FxcmTickLineParser(int decimalPlaces) {
 		super(decimalPlaces);
@@ -28,7 +28,7 @@ public class FxcmTickLineParser extends FxcmLineParser implements IPriceTickLine
 	}
 
 	@Override
-	public IPriceTick parseTick(String line) {
+	public IPriceCandle parseCandle(String line) {
 
 		CharTokenizer tokenizer = new CharTokenizer(line, DELIMITERS);
 		int decimalPlaces = getDecimalPlaces();
@@ -45,6 +45,6 @@ public class FxcmTickLineParser extends FxcmLineParser implements IPriceTickLine
 		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
 		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
 
-		return new PriceTick(bidPrice, askPrice, timestamp, decimalPlaces);
+		return new TickPriceCandle(bidPrice, askPrice, timestamp, decimalPlaces);
 	}
 }

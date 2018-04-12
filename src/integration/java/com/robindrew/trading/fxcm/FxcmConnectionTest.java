@@ -4,7 +4,6 @@ import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 
 import org.junit.Test;
 
-import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
@@ -26,9 +25,9 @@ public class FxcmConnectionTest {
 		FxcmRestService rest = new FxcmRestService(session);
 		rest.login();
 		
-		TradingSessionStatus status = rest.getTradingSessionStatus();
-		MarketDataSnapshot snapshot = rest.getMarketDataSnapshot(status);
-		System.out.println(snapshot);
+		TradingSessionStatus status = rest.getTradingSessionStatus().get();
+//		MarketDataSnapshot snapshot = rest.getMarketDataSnapshot(status);
+//		System.out.println(snapshot);
 		
 		Threads.sleepForever();
 		

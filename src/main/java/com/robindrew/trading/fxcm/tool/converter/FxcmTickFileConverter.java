@@ -14,13 +14,12 @@ import com.robindrew.common.io.Files;
 import com.robindrew.common.lang.Args;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.line.FxcmTickLineParser;
+import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
-import com.robindrew.trading.price.tick.IPriceTick;
-import com.robindrew.trading.price.tick.format.ptf.source.file.PtfFileStreamSink;
-import com.robindrew.trading.price.tick.io.list.sink.IPriceTickListSink;
-import com.robindrew.trading.price.tick.io.list.sink.PriceTickListToStreamSink;
-import com.robindrew.trading.price.tick.line.parser.IPriceTickLineParser;
-import com.robindrew.trading.price.tick.line.parser.PriceTickLineFile;
+import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
+import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
+import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
+import com.robindrew.trading.price.candle.line.parser.PriceCandleLineFile;
 
 public class FxcmTickFileConverter {
 
@@ -60,7 +59,7 @@ public class FxcmTickFileConverter {
 		}
 		directory.mkdirs();
 
-		try (IPriceTickListSink sink = new PriceTickListToStreamSink(new PtfFileStreamSink(directory))) {
+		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PcfFileStreamSink(directory))) {
 
 			// List and sort the files
 			List<File> files = Files.listFiles(inputDir, false);
@@ -69,9 +68,9 @@ public class FxcmTickFileConverter {
 			for (File file : files) {
 				log.info("Converting File: {}", file);
 
-				IPriceTickLineParser parser = new FxcmTickLineParser(instrument);
-				List<IPriceTick> ticks = new PriceTickLineFile(file, parser).toList();
-				sink.putNextTicks(ticks);
+				FxcmTickLineParser parser = new FxcmTickLineParser(instrument);
+				List<IPriceCandle> ticks = new PriceCandleLineFile(file, parser).toList();
+				sink.putNextCandles(ticks);
 			}
 		}
 	}

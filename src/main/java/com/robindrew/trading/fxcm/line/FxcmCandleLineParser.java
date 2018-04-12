@@ -1,22 +1,20 @@
 package com.robindrew.trading.fxcm.line;
 
 import static com.robindrew.trading.price.candle.interval.TimeUnitInterval.ONE_MINUTE;
+import static com.robindrew.trading.price.decimal.Decimals.toBigInt;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.price.Mid;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
 import com.robindrew.trading.price.candle.line.parser.IPriceCandleLineParser;
-import com.robindrew.trading.price.decimal.Decimals;
 import com.robindrew.trading.price.precision.IPricePrecision;
 
-public class FxcmCandleLineParser extends FxcmLineParser implements IPriceCandleLineParser{
+public class FxcmCandleLineParser extends FxcmLineParser implements IPriceCandleLineParser {
 
 	public FxcmCandleLineParser(int decimalPlaces) {
 		super(decimalPlaces);
@@ -43,29 +41,18 @@ public class FxcmCandleLineParser extends FxcmLineParser implements IPriceCandle
 		long closeTime = openTime + ONE_MINUTE.getIntervalInMillis();
 
 		// Bid
-		BigDecimal bidOpen = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidHigh = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidLow = new BigDecimal(tokenizer.next(false));
-		BigDecimal bidClose = new BigDecimal(tokenizer.next(false));
+		int bidOpen = toBigInt(tokenizer.next(false), decimalPlaces);
+		int bidHigh = toBigInt(tokenizer.next(false), decimalPlaces);
+		int bidLow = toBigInt(tokenizer.next(false), decimalPlaces);
+		int bidClose = toBigInt(tokenizer.next(false), decimalPlaces);
 
 		// Ask
-		BigDecimal askOpen = new BigDecimal(tokenizer.next(false));
-		BigDecimal askHigh = new BigDecimal(tokenizer.next(false));
-		BigDecimal askLow = new BigDecimal(tokenizer.next(false));
-		BigDecimal askClose = new BigDecimal(tokenizer.next(false));
+		int askOpen = toBigInt(tokenizer.next(false), decimalPlaces);
+		int askHigh = toBigInt(tokenizer.next(false), decimalPlaces);
+		int askLow = toBigInt(tokenizer.next(false), decimalPlaces);
+		int askClose = toBigInt(tokenizer.next(false), decimalPlaces);
 
-		int openPrice = parsePrice(bidOpen, askOpen, decimalPlaces);
-		int highPrice = parsePrice(bidHigh, askHigh, decimalPlaces);
-		int lowPrice = parsePrice(bidLow, askLow, decimalPlaces);
-		int closePrice = parsePrice(bidClose, askClose, decimalPlaces);
-
-		return new PriceCandle(openPrice, highPrice, lowPrice, closePrice, openTime, closeTime, decimalPlaces);
-	}
-
-	private int parsePrice(BigDecimal bid, BigDecimal ask, int decimalPlaces) {
-		int bidPrice = Decimals.toBigInt(bid, decimalPlaces);
-		int askPrice = Decimals.toBigInt(ask, decimalPlaces);
-		return Mid.getMid(bidPrice, askPrice);
+		return new PriceCandle(bidOpen, bidHigh, bidLow, bidClose, askOpen, askHigh, askLow, askClose, openTime, closeTime, decimalPlaces);
 	}
 
 }
