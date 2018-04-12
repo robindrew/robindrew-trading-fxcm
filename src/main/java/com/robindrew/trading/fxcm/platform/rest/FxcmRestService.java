@@ -1,6 +1,5 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
-import java.lang.reflect.Field;
 import java.util.Enumeration;
 import java.util.concurrent.Future;
 
@@ -22,13 +21,12 @@ import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
+import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
+import com.robindrew.trading.price.candle.PriceCandle;
+import com.robindrew.trading.price.decimal.Decimals;
 
 public class FxcmRestService implements IFxcmRestService {
-
-	public static void main(String[] args) {
-		System.out.println(System.currentTimeMillis());
-	}
 
 	private static final Logger log = LoggerFactory.getLogger(FxcmRestService.class);
 
@@ -106,49 +104,82 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
-	private class ResponseListener implements IGenericMessageListener {
+	public void handleMessage(ITransportable message) {
+		try {
 
-		private final Logger log = LoggerFactory.getLogger(ResponseListener.class);
+			// Is this message a request/response
+			String requestId = message.getRequestID();
+			if (requestId != null) {
+				log.debug("messageArrived(requestId={})", requestId);
+				cache.put(requestId, message);
+				return;
+			}
+
+			// Handle snapshots (ticking prices)
+			if (message instanceof MarketDataSnapshot) {
+				handleMarketDataSnapshot((MarketDataSnapshot) message);
+				return;
+			}
+
+			log.warn("Message not handled: " + message);
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
+		}
+	}
+
+	private void handleMarketDataSnapshot(MarketDataSnapshot snapshot) throws Exception {
+
+		// Instrument
+		String symbol = snapshot.getInstrument().getSymbol();
+		FxcmInstrument instrument = FxcmInstrument.valueOf(symbol);
+
+		// Decimal Places
+		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
+
+		// Bid Prices
+		System.out.println(symbol);
+		int bidOpenPrice = Decimals.toInt(snapshot.getBidOpen(), decimalPlaces);
+		int bidHighPrice = Decimals.toInt(snapshot.getBidHigh(), decimalPlaces);
+		int bidLowPrice = Decimals.toInt(snapshot.getBidLow(), decimalPlaces);
+		int bidClosePrice = Decimals.toInt(snapshot.getBidClose(), decimalPlaces);
+
+		// Ask Prices
+		int askOpenPrice = Decimals.toInt(snapshot.getAskOpen(), decimalPlaces);
+		int askHighPrice = Decimals.toInt(snapshot.getAskHigh(), decimalPlaces);
+		int askLowPrice = Decimals.toInt(snapshot.getAskLow(), decimalPlaces);
+		int askClosePrice = Decimals.toInt(snapshot.getAskClose(), decimalPlaces);
+
+		long openTime = snapshot.getOpenTimestamp().getTime();
+		long closeTime = snapshot.getCloseTimestamp().getTime();
+
+		PriceCandle candle = new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
+		handlePriceTick(instrument, candle);
+	}
+
+	private void handlePriceTick(FxcmInstrument instrument, PriceCandle candle) {
+		log.info("[{}] {}", instrument, candle);
+	}
+
+	public void handleMessage(ISessionStatus message) {
+		if (log.isDebugEnabled()) {
+			log.debug("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
+		}
+	}
+
+	private class ResponseListener implements IGenericMessageListener {
 
 		@Override
 		public void messageArrived(ITransportable message) {
-			try {
-
-				// Is this message a request/response
-				String requestId = message.getRequestID();
-				if (requestId != null) {
-					log.debug("messageArrived(requestId={})", requestId);
-					cache.put(requestId, message);
-					return;
-				}
-
-				// Handle snapshots (ticking prices)
-				if (message instanceof MarketDataSnapshot) {
-					MarketDataSnapshot snapshot = (MarketDataSnapshot) message;
-
-					for (Field field : MarketDataSnapshot.class.getDeclaredFields()) {
-						field.setAccessible(true);
-						System.out.println(field.getName() + " = " + field.get(snapshot));
-					}
-					System.out.println();
-					return;
-				}
-
-				log.warn("Message not handled: " + message);
-
-			} catch (Exception e) {
-				throw Java.propagate(e);
-			}
+			handleMessage(message);
 		}
 	}
 
 	private class StatusListener implements IStatusMessageListener {
 
-		private final Logger log = LoggerFactory.getLogger(FxcmRestService.StatusListener.class);
-
 		@Override
 		public void messageArrived(ISessionStatus message) {
-			log.debug("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
+			handleMessage(message);
 		}
 	}
 
