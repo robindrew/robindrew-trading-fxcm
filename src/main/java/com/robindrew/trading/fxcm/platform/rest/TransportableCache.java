@@ -29,6 +29,7 @@ public class TransportableCache {
 	public class TransportableFuture<T extends ITransportable> implements Future<T> {
 
 		private final String requestId;
+		private volatile ITransportable response;
 
 		public TransportableFuture(String requestId) {
 			this.requestId = requestId;
@@ -48,12 +49,13 @@ public class TransportableCache {
 		@Override
 		public T get() {
 			while (true) {
-				ITransportable response = cache.get(requestId);
+				response = cache.remove(requestId);
 				if (response != null) {
-					return (T) response;
+					break;
 				}
-				Threads.sleep(100);
+				Threads.sleep(50);
 			}
+			return (T) response;
 		}
 
 		@Override

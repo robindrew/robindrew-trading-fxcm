@@ -1,5 +1,7 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
+import static com.robindrew.trading.price.decimal.Decimals.toInt;
+
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.TreeSet;
@@ -22,7 +24,6 @@ import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
-import com.robindrew.common.date.Dates;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
@@ -30,7 +31,7 @@ import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.rest.TransportableCache.TransportableFuture;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
-import com.robindrew.trading.price.decimal.Decimals;
+import com.robindrew.trading.price.candle.TickPriceCandle;
 
 public class FxcmRestService implements IFxcmRestService {
 
@@ -68,11 +69,14 @@ public class FxcmRestService implements IFxcmRestService {
 			log.info("[Server] {}", server);
 
 			// Login!
-			log.info("Logging in ...");
+			log.info("login()");
 			Stopwatch timer = Stopwatch.createStarted();
 			gateway.login(properties);
 			timer.stop();
-			log.info("Logged in ({})", timer);
+			log.info("login() took {}", timer);
+
+			// Immediately get the session status
+			getTradingSessionStatus();
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -83,7 +87,16 @@ public class FxcmRestService implements IFxcmRestService {
 		gateway.logout();
 	}
 
-	public TransportableFuture<TradingSessionStatus> getTradingSessionStatus() {
+	public TradingSessionStatus getTradingSessionStatus() {
+		log.info("getTradingSessionStatus()");
+		Stopwatch timer = Stopwatch.createStarted();
+		TradingSessionStatus status = getTradingSessionStatusAsync().get();
+		timer.stop();
+		log.info("getTradingSessionStatus() took {}", timer);
+		return status;
+	}
+
+	public TransportableFuture<TradingSessionStatus> getTradingSessionStatusAsync() {
 		String requestId = gateway.requestTradingSessionStatus();
 		return responseCache.get(requestId);
 	}
@@ -158,27 +171,31 @@ public class FxcmRestService implements IFxcmRestService {
 		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
 
 		// Bid Prices
-		int bidOpenPrice = Decimals.toInt(snapshot.getBidOpen(), decimalPlaces);
-		int bidHighPrice = Decimals.toInt(snapshot.getBidHigh(), decimalPlaces);
-		int bidLowPrice = Decimals.toInt(snapshot.getBidLow(), decimalPlaces);
-		int bidClosePrice = Decimals.toInt(snapshot.getBidClose(), decimalPlaces);
+		int bidOpenPrice = toInt(snapshot.getBidOpen(), decimalPlaces);
+		int bidHighPrice = toInt(snapshot.getBidHigh(), decimalPlaces);
+		int bidLowPrice = toInt(snapshot.getBidLow(), decimalPlaces);
+		int bidClosePrice = toInt(snapshot.getBidClose(), decimalPlaces);
 
 		// Ask Prices
-		int askOpenPrice = Decimals.toInt(snapshot.getAskOpen(), decimalPlaces);
-		int askHighPrice = Decimals.toInt(snapshot.getAskHigh(), decimalPlaces);
-		int askLowPrice = Decimals.toInt(snapshot.getAskLow(), decimalPlaces);
-		int askClosePrice = Decimals.toInt(snapshot.getAskClose(), decimalPlaces);
+		int askOpenPrice = toInt(snapshot.getAskOpen(), decimalPlaces);
+		int askHighPrice = toInt(snapshot.getAskHigh(), decimalPlaces);
+		int askLowPrice = toInt(snapshot.getAskLow(), decimalPlaces);
+		int askClosePrice = toInt(snapshot.getAskClose(), decimalPlaces);
 
+		// Timestamps (UTC)
 		long openTime = snapshot.getOpenTimestamp().getTime();
 		long closeTime = snapshot.getCloseTimestamp().getTime();
 
-		System.out.println("date=" + snapshot.getDate());
-		System.out.println("time" + snapshot.getDate());
-		System.out.println("makingTime=" + Dates.toLocalDateTime(snapshot.getMakingTime()));
-		System.out.println("openTime=" + snapshot.getOpenTimestamp());
-		System.out.println("closeTime=" + snapshot.getCloseTimestamp());
-		System.out.println("date=" + snapshot.getDate());
+		// Is this a tick?
+		if (openTime == closeTime) {
+			if ((bidOpenPrice == bidClosePrice) && (bidHighPrice == bidLowPrice)) {
+				if ((askOpenPrice == askClosePrice) && (askHighPrice == askLowPrice)) {
+					return new TickPriceCandle(bidClosePrice, askClosePrice, closeTime, decimalPlaces);
+				}
+			}
+		}
 
+		// Nope, just a big fat candle!
 		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
 	}
 
@@ -231,10 +248,11 @@ public class FxcmRestService implements IFxcmRestService {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private Instrument getInstrument(FxcmInstrument instrument) {
 		try {
 
-			TradingSessionStatus status = getTradingSessionStatus().get();
+			TradingSessionStatus status = getTradingSessionStatus();
 
 			Set<String> symbols = new TreeSet<>();
 			Enumeration<TradingSecurity> securities = status.getSecurities();

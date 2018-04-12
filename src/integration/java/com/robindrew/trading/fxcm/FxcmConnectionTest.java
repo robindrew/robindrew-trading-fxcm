@@ -2,13 +2,8 @@ package com.robindrew.trading.fxcm;
 
 import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 
-import java.util.Enumeration;
-
 import org.junit.Test;
 
-import com.fxcm.fix.SubscriptionRequestTypeFactory;
-import com.fxcm.fix.TradingSecurity;
-import com.fxcm.fix.pretrade.MarketDataRequest;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
@@ -29,10 +24,6 @@ public class FxcmConnectionTest {
 		FxcmSession session = new FxcmSession(credentials, environment);
 		FxcmRestService rest = new FxcmRestService(session);
 		rest.login();
-
-		TradingSessionStatus status = rest.getTradingSessionStatus().get();
-
-		rest.subscribe(FxcmInstrument.SPOT_USD_CHF);
 
 		Threads.sleepForever();
 
