@@ -4,8 +4,10 @@
 	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/integration/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8/"/>
-	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/log4j-over-slf4j/log4j-over-slf4j-1.7.25.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar" sourcepath="MAVEN_REPO/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25-sources.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/log4j-over-slf4j/log4j-over-slf4j-1.7.25.jar" sourcepath="MAVEN_REPO/org/slf4j/log4j-over-slf4j/log4j-over-slf4j-1.7.25-sources.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25.jar" sourcepath="MAVEN_REPO/org/slf4j/jcl-over-slf4j/1.7.25/jcl-over-slf4j-1.7.25-sources.jar"/>
+	<classpathentry kind="var" path="MAVEN_REPO/uk/org/lidalia/sysout-over-slf4j/1.0.2/sysout-over-slf4j-1.0.2.jar" sourcepath="MAVEN_REPO/uk/org/lidalia/sysout-over-slf4j/1.0.2/sysout-over-slf4j-1.0.2-sources.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/com/google/guava/guava/23.0/guava-23.0.jar" sourcepath="MAVEN_REPO/com/google/guava/guava/23.0/guava-23.0-sources.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/junit/junit/4.12/junit-4.12.jar" sourcepath="MAVEN_REPO/junit/junit/4.12/junit-4.12-sources.jar"/>
 	<classpathentry kind="var" path="MAVEN_REPO/org/apache/commons/commons-lang3/3.7/commons-lang3-3.7.jar" sourcepath="MAVEN_REPO/org/apache/commons/commons-lang3/3.7/commons-lang3-3.7-sources.jar"/>

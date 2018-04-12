@@ -1,62 +1,36 @@
 package com.robindrew.trading.fxcm;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 
-import com.fxcm.external.api.transport.FXCMLoginProperties;
-import com.fxcm.external.api.transport.GatewayFactory;
-import com.fxcm.external.api.transport.IGateway;
-import com.fxcm.external.api.transport.listeners.IGenericMessageListener;
-import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
-import com.fxcm.messaging.ISessionStatus;
-import com.fxcm.messaging.ITransportable;
+import org.junit.Test;
+
+import com.fxcm.fix.pretrade.MarketDataSnapshot;
+import com.fxcm.fix.pretrade.TradingSessionStatus;
+import com.robindrew.common.util.Threads;
+import com.robindrew.trading.fxcm.platform.FxcmCredentials;
+import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
+import com.robindrew.trading.fxcm.platform.FxcmSession;
+import com.robindrew.trading.fxcm.platform.rest.FxcmRestService;
 
 public class FxcmConnectionTest {
 
-	private static final Logger log = LoggerFactory.getLogger(FxcmConnectionTest.class);
-	
-	private class GenericListener implements IGenericMessageListener {
-
-		@Override
-		public void messageArrived(ITransportable message) {
-			log.info("ITransportable = " + message + ")");
-		}
-	}
-
-	private class StatusListener implements IStatusMessageListener {
-
-		@Override
-		public void messageArrived(ISessionStatus message) {
-			log.info("messageArrived(" + message.getStatusMessage() + ")");
-		}
-	}
-
 	@Test
 	public void connect() throws Exception {
-		IGateway gateway = GatewayFactory.createGateway();
-		gateway.registerGenericMessageListener(new GenericListener());
-		gateway.registerStatusMessageListener(new StatusListener());
 
-		if (!gateway.isConnected()) {
-			String username = "";
-			String password = "";
-			String station = "Demo";
-			String server = "http://www.fxcorporate.com/Hosts.jsp";
-			String configFile = null;
+		String username = System.getProperty("username");
+		String password = System.getProperty("password");
 
-			FXCMLoginProperties properties = new FXCMLoginProperties(username, password, station, server, configFile);
-			log.info("LOGIN");
-			gateway.login(properties);
-			log.info("LOGGEDIN");
-		}
-
-		log.info("requestTradingSessionStatus()");
-		String status = gateway.requestTradingSessionStatus();
-		log.info("requestTradingSessionStatus() -> " + status);
-
-		log.info("requestAccounts()");
-		String accountId = gateway.requestAccounts();
-		log.info("requestAccounts() -> " + accountId);
+		FxcmCredentials credentials = new FxcmCredentials(username, password);
+		FxcmEnvironment environment = DEMO;
+		FxcmSession session = new FxcmSession(credentials, environment);
+		FxcmRestService rest = new FxcmRestService(session);
+		rest.login();
+		
+		TradingSessionStatus status = rest.getTradingSessionStatus();
+		MarketDataSnapshot snapshot = rest.getMarketDataSnapshot(status);
+		System.out.println(snapshot);
+		
+		Threads.sleepForever();
+		
 	}
 }
