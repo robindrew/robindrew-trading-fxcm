@@ -1,6 +1,8 @@
 package com.robindrew.trading.fxcm;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fxcm.external.api.transport.FXCMLoginProperties;
 import com.fxcm.external.api.transport.GatewayFactory;
@@ -12,11 +14,13 @@ import com.fxcm.messaging.ITransportable;
 
 public class FxcmConnectionTest {
 
+	private static final Logger log = LoggerFactory.getLogger(FxcmConnectionTest.class);
+	
 	private class GenericListener implements IGenericMessageListener {
 
 		@Override
 		public void messageArrived(ITransportable message) {
-			System.out.println("generic=" + message);
+			log.info("ITransportable = " + message + ")");
 		}
 	}
 
@@ -24,7 +28,7 @@ public class FxcmConnectionTest {
 
 		@Override
 		public void messageArrived(ISessionStatus message) {
-			System.out.println("status=" + message);
+			log.info("messageArrived(" + message.getStatusMessage() + ")");
 		}
 	}
 
@@ -35,18 +39,24 @@ public class FxcmConnectionTest {
 		gateway.registerStatusMessageListener(new StatusListener());
 
 		if (!gateway.isConnected()) {
-			String username = null;
-			String password = null;
+			String username = "";
+			String password = "";
 			String station = "Demo";
 			String server = "http://www.fxcorporate.com/Hosts.jsp";
 			String configFile = null;
-			
+
 			FXCMLoginProperties properties = new FXCMLoginProperties(username, password, station, server, configFile);
+			log.info("LOGIN");
 			gateway.login(properties);
+			log.info("LOGGEDIN");
 		}
 
-		gateway.requestTradingSessionStatus();
+		log.info("requestTradingSessionStatus()");
+		String status = gateway.requestTradingSessionStatus();
+		log.info("requestTradingSessionStatus() -> " + status);
+
+		log.info("requestAccounts()");
 		String accountId = gateway.requestAccounts();
-		System.out.println(accountId);
+		log.info("requestAccounts() -> " + accountId);
 	}
 }
