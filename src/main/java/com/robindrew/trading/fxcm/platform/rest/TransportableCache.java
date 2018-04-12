@@ -21,12 +21,12 @@ public class TransportableCache {
 		cache.put(requestId, response);
 	}
 
-	public <T extends ITransportable> Future<T> get(String requestId) {
+	public <T extends ITransportable> TransportableFuture<T> get(String requestId) {
 		Check.notEmpty("requestId", requestId);
 		return new TransportableFuture<>(requestId);
 	}
 
-	private class TransportableFuture<T extends ITransportable> implements Future<T> {
+	public class TransportableFuture<T extends ITransportable> implements Future<T> {
 
 		private final String requestId;
 
@@ -46,7 +46,7 @@ public class TransportableCache {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public T get() throws InterruptedException, ExecutionException {
+		public T get() {
 			while (true) {
 				ITransportable response = cache.get(requestId);
 				if (response != null) {

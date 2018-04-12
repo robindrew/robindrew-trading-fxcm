@@ -60,7 +60,7 @@ public class FxcmInstrument extends Instrument {
 	/** GBP/CAD. */
 	public static final FxcmInstrument SPOT_GBP_CAD = new FxcmInstrument("GBP/CAD", GBP_CAD, 6, 40000, 190000);
 	/** GBP/CHF. */
-	public static final FxcmInstrument SPOT_GBP_CHF = new FxcmInstrument("GBP/CHF", GBP_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_CHF = new FxcmInstrument("GBP/CHF", GBP_CHF, 6, 40000, 190000);
 	/** GBP/JPY. */
 	public static final FxcmInstrument SPOT_GBP_JPY = new FxcmInstrument("GBP/JPY", GBP_JPY, 4, 40000, 190000);
 	/** GBP/NZD. */
@@ -78,7 +78,7 @@ public class FxcmInstrument extends Instrument {
 	/** USD/CAD. */
 	public static final FxcmInstrument SPOT_USD_CAD = new FxcmInstrument("USD/CAD", USD_CAD, 6, 40000, 190000);
 	/** USD/CHF. */
-	public static final FxcmInstrument SPOT_USD_CHF = new FxcmInstrument("USD/CHF", USD_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_USD_CHF = new FxcmInstrument("USD/CHF", USD_CHF, 6, 40000, 190000);
 	/** USD/JPY. */
 	public static final FxcmInstrument SPOT_USD_JPY = new FxcmInstrument("USD/JPY", USD_JPY, 4, 40000, 190000);
 
@@ -163,6 +163,10 @@ public class FxcmInstrument extends Instrument {
 	public FxcmInstrument(String name, IInstrument underlying, int decimalPlaces, int minPrice, int maxPrice) {
 		super(name, underlying);
 		this.precision = new PricePrecision(decimalPlaces, minPrice, maxPrice);
+	}
+
+	public String getSymbol() {
+		return getName();
 	}
 
 	public IPricePrecision getPricePrecision() {

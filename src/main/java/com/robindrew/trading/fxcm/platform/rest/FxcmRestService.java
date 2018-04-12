@@ -1,6 +1,8 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
 import java.util.Enumeration;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import com.fxcm.external.api.transport.GatewayFactory;
 import com.fxcm.external.api.transport.IGateway;
 import com.fxcm.external.api.transport.listeners.IGenericMessageListener;
 import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
+import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
 import com.fxcm.fix.TradingSecurity;
 import com.fxcm.fix.pretrade.MarketDataRequest;
@@ -19,10 +22,13 @@ import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
+import com.robindrew.common.date.Dates;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
+import com.robindrew.trading.fxcm.platform.rest.TransportableCache.TransportableFuture;
+import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
 import com.robindrew.trading.price.decimal.Decimals;
 
@@ -32,7 +38,7 @@ public class FxcmRestService implements IFxcmRestService {
 
 	private final IFxcmSession session;
 	private final IGateway gateway;
-	private final TransportableCache cache = new TransportableCache();
+	private final TransportableCache responseCache = new TransportableCache();
 	private final ResponseListener responseListener = new ResponseListener();
 	private final StatusListener statusListener = new StatusListener();
 
@@ -77,9 +83,9 @@ public class FxcmRestService implements IFxcmRestService {
 		gateway.logout();
 	}
 
-	public Future<TradingSessionStatus> getTradingSessionStatus() {
+	public TransportableFuture<TradingSessionStatus> getTradingSessionStatus() {
 		String requestId = gateway.requestTradingSessionStatus();
-		return cache.get(requestId);
+		return responseCache.get(requestId);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -97,7 +103,7 @@ public class FxcmRestService implements IFxcmRestService {
 			marketData.setMDEntryTypeSet(MarketDataRequest.MDENTRYTYPESET_TICKALL);
 			String requestId = gateway.sendMessage(marketData);
 
-			return cache.get(requestId);
+			return responseCache.get(requestId);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -111,7 +117,7 @@ public class FxcmRestService implements IFxcmRestService {
 			String requestId = message.getRequestID();
 			if (requestId != null) {
 				log.debug("messageArrived(requestId={})", requestId);
-				cache.put(requestId, message);
+				responseCache.put(requestId, message);
 				return;
 			}
 
@@ -129,16 +135,29 @@ public class FxcmRestService implements IFxcmRestService {
 	}
 
 	private void handleMarketDataSnapshot(MarketDataSnapshot snapshot) throws Exception {
+		FxcmInstrument instrument = getInstrument(snapshot.getInstrument());
+		IPriceCandle candle = toPriceCandle(snapshot);
+		handlePriceTick(instrument, candle);
+	}
+
+	private void handlePriceTick(FxcmInstrument instrument, IPriceCandle candle) {
+		log.info("[{}] {}", instrument, candle);
+	}
+
+	protected FxcmInstrument getInstrument(Instrument instrument) throws Exception {
+		String symbol = instrument.getSymbol();
+		return FxcmInstrument.valueOf(symbol);
+	}
+
+	private IPriceCandle toPriceCandle(MarketDataSnapshot snapshot) throws Exception {
 
 		// Instrument
-		String symbol = snapshot.getInstrument().getSymbol();
-		FxcmInstrument instrument = FxcmInstrument.valueOf(symbol);
+		FxcmInstrument instrument = getInstrument(snapshot.getInstrument());
 
 		// Decimal Places
 		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
 
 		// Bid Prices
-		System.out.println(symbol);
 		int bidOpenPrice = Decimals.toInt(snapshot.getBidOpen(), decimalPlaces);
 		int bidHighPrice = Decimals.toInt(snapshot.getBidHigh(), decimalPlaces);
 		int bidLowPrice = Decimals.toInt(snapshot.getBidLow(), decimalPlaces);
@@ -153,12 +172,14 @@ public class FxcmRestService implements IFxcmRestService {
 		long openTime = snapshot.getOpenTimestamp().getTime();
 		long closeTime = snapshot.getCloseTimestamp().getTime();
 
-		PriceCandle candle = new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
-		handlePriceTick(instrument, candle);
-	}
+		System.out.println("date=" + snapshot.getDate());
+		System.out.println("time" + snapshot.getDate());
+		System.out.println("makingTime=" + Dates.toLocalDateTime(snapshot.getMakingTime()));
+		System.out.println("openTime=" + snapshot.getOpenTimestamp());
+		System.out.println("closeTime=" + snapshot.getCloseTimestamp());
+		System.out.println("date=" + snapshot.getDate());
 
-	private void handlePriceTick(FxcmInstrument instrument, PriceCandle candle) {
-		log.info("[{}] {}", instrument, candle);
+		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
 	}
 
 	public void handleMessage(ISessionStatus message) {
@@ -180,6 +201,55 @@ public class FxcmRestService implements IFxcmRestService {
 		@Override
 		public void messageArrived(ISessionStatus message) {
 			handleMessage(message);
+		}
+	}
+
+	public boolean subscribe(FxcmInstrument instrument) {
+		try {
+
+			MarketDataRequest request = new MarketDataRequest();
+			request.addRelatedSymbol(getInstrument(instrument));
+			request.setSubscriptionRequestType(SubscriptionRequestTypeFactory.SUBSCRIBE);
+			request.setMDEntryTypeSet(MarketDataRequest.MDENTRYTYPESET_ALL);
+
+			// Send the request
+			String requestId = gateway.sendMessage(request);
+
+			// Wait for the response
+			ITransportable response = responseCache.get(requestId).get();
+
+			// We are expecting a price snapshot
+			if (response instanceof MarketDataSnapshot) {
+				MarketDataSnapshot snapshot = (MarketDataSnapshot) response;
+				return instrument.getSymbol().equals(snapshot.getInstrument().getSymbol());
+			}
+			return false;
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
+		}
+
+	}
+
+	private Instrument getInstrument(FxcmInstrument instrument) {
+		try {
+
+			TradingSessionStatus status = getTradingSessionStatus().get();
+
+			Set<String> symbols = new TreeSet<>();
+			Enumeration<TradingSecurity> securities = status.getSecurities();
+			while (securities.hasMoreElements()) {
+				TradingSecurity security = (TradingSecurity) securities.nextElement();
+				String symbol = security.getSymbol();
+				if (symbol.equals(instrument.getSymbol())) {
+					return security;
+				}
+				symbols.add(symbol);
+			}
+			throw new IllegalArgumentException("Instrument not found: " + instrument);
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
 		}
 	}
 
