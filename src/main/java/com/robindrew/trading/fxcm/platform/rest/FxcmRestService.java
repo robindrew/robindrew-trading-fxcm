@@ -2,7 +2,9 @@ package com.robindrew.trading.fxcm.platform.rest;
 
 import static com.robindrew.trading.price.decimal.Decimals.toInt;
 
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
@@ -43,7 +45,7 @@ public class FxcmRestService implements IFxcmRestService {
 
 	private final IFxcmSession session;
 	private final IGateway gateway;
-	private final TransportableCache responseCache = new TransportableCache();
+	private final TransportableCache gatewayAsyncResponseMap = new TransportableCache();
 	private final ResponseListener responseListener = new ResponseListener();
 	private final StatusListener statusListener = new StatusListener();
 	private final FxcmStreamingService streaming = new FxcmStreamingService();
@@ -106,25 +108,22 @@ public class FxcmRestService implements IFxcmRestService {
 	@Override
 	public TransportableFuture<TradingSessionStatus> getTradingSessionStatusAsync() {
 		String requestId = gateway.requestTradingSessionStatus();
-		return responseCache.get(requestId);
+		return gatewayAsyncResponseMap.get(requestId);
 	}
 
-	@SuppressWarnings("unchecked")
-	public Future<MarketDataSnapshot> getMarketDataSnapshot(TradingSessionStatus status) {
+	public Future<MarketDataSnapshot> getMarketDataSnapshot(FxcmInstrument instrument) {
 		try {
 
+			TradingSessionStatus status = getTradingSessionStatus();
+
 			MarketDataRequest marketData = new MarketDataRequest();
-			Enumeration<TradingSecurity> securities = status.getSecurities();
-			while (securities.hasMoreElements()) {
-				TradingSecurity symbol = securities.nextElement();
-				marketData.addRelatedSymbol(symbol);
-				break;
-			}
+			marketData.addRelatedSymbol(getInstrument(status, instrument));
 			marketData.setSubscriptionRequestType(SubscriptionRequestTypeFactory.SNAPSHOT);
 			marketData.setMDEntryTypeSet(MarketDataRequest.MDENTRYTYPESET_TICKALL);
-			String requestId = gateway.sendMessage(marketData);
 
-			return responseCache.get(requestId);
+			// Request / Response
+			String requestId = gateway.sendMessage(marketData);
+			return gatewayAsyncResponseMap.get(requestId);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -138,7 +137,7 @@ public class FxcmRestService implements IFxcmRestService {
 			String requestId = message.getRequestID();
 			if (requestId != null) {
 				log.debug("messageArrived(requestId={})", requestId);
-				responseCache.put(requestId, message);
+				gatewayAsyncResponseMap.put(requestId, message);
 				return;
 			}
 
@@ -156,7 +155,7 @@ public class FxcmRestService implements IFxcmRestService {
 	}
 
 	private void handleMarketDataSnapshot(MarketDataSnapshot snapshot) throws Exception {
-		FxcmInstrument instrument = getInstrument(snapshot.getInstrument());
+		FxcmInstrument instrument = getFxcmInstrument(snapshot.getInstrument());
 		IPriceCandle candle = toPriceCandle(snapshot);
 		handlePriceTick(instrument, candle);
 	}
@@ -165,15 +164,35 @@ public class FxcmRestService implements IFxcmRestService {
 		log.info("[{}] {}", instrument, candle);
 	}
 
-	protected FxcmInstrument getInstrument(Instrument instrument) throws Exception {
+	protected FxcmInstrument getFxcmInstrument(Instrument instrument) throws Exception {
 		String symbol = instrument.getSymbol();
 		return FxcmInstrument.valueOf(symbol);
+	}
+
+	private Instrument getInstrument(TradingSessionStatus status, FxcmInstrument instrument) {
+		try {
+
+			Set<String> symbols = new TreeSet<>();
+			for (TradingSecurity security : getSecurities(status)) {
+				String symbol = security.getSymbol();
+				if (symbol.equals(instrument.getSymbol())) {
+					return security;
+				}
+				symbols.add(symbol);
+			}
+
+			// Not found?
+			throw new IllegalArgumentException("Instrument not found: " + instrument);
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
+		}
 	}
 
 	private IPriceCandle toPriceCandle(MarketDataSnapshot snapshot) throws Exception {
 
 		// Instrument
-		FxcmInstrument instrument = getInstrument(snapshot.getInstrument());
+		FxcmInstrument instrument = getFxcmInstrument(snapshot.getInstrument());
 
 		// Decimal Places
 		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
@@ -242,7 +261,7 @@ public class FxcmRestService implements IFxcmRestService {
 			String requestId = gateway.sendMessage(request);
 
 			// Wait for the response
-			ITransportable response = responseCache.get(requestId).get();
+			ITransportable response = gatewayAsyncResponseMap.get(requestId).get();
 
 			// We are expecting a price snapshot
 			if (response instanceof MarketDataSnapshot) {
@@ -258,15 +277,18 @@ public class FxcmRestService implements IFxcmRestService {
 	}
 
 	@SuppressWarnings("unchecked")
+	private List<TradingSecurity> getSecurities(TradingSessionStatus status) {
+		Enumeration<TradingSecurity> securities = status.getSecurities();
+		return Collections.list(securities);
+	}
+
 	private Instrument getInstrument(FxcmInstrument instrument) {
 		try {
 
 			TradingSessionStatus status = getTradingSessionStatus();
 
 			Set<String> symbols = new TreeSet<>();
-			Enumeration<TradingSecurity> securities = status.getSecurities();
-			while (securities.hasMoreElements()) {
-				TradingSecurity security = securities.nextElement();
+			for (TradingSecurity security : getSecurities(status)) {
 				String symbol = security.getSymbol();
 				if (symbol.equals(instrument.getSymbol())) {
 					return security;
