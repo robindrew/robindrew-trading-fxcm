@@ -26,9 +26,13 @@ import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
+import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.rest.TransportableCache.TransportableFuture;
+import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
+import com.robindrew.trading.platform.streaming.IStreamingService;
+import com.robindrew.trading.platform.streaming.StreamingService;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
 import com.robindrew.trading.price.candle.TickPriceCandle;
@@ -42,6 +46,7 @@ public class FxcmRestService implements IFxcmRestService {
 	private final TransportableCache responseCache = new TransportableCache();
 	private final ResponseListener responseListener = new ResponseListener();
 	private final StatusListener statusListener = new StatusListener();
+	private final FxcmStreamingService streaming = new FxcmStreamingService();
 
 	public FxcmRestService(IFxcmSession session) {
 		this.session = Check.notNull("session", session);
@@ -83,10 +88,12 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
+	@Override
 	public void logout() {
 		gateway.logout();
 	}
 
+	@Override
 	public TradingSessionStatus getTradingSessionStatus() {
 		log.info("getTradingSessionStatus()");
 		Stopwatch timer = Stopwatch.createStarted();
@@ -96,6 +103,7 @@ public class FxcmRestService implements IFxcmRestService {
 		return status;
 	}
 
+	@Override
 	public TransportableFuture<TradingSessionStatus> getTradingSessionStatusAsync() {
 		String requestId = gateway.requestTradingSessionStatus();
 		return responseCache.get(requestId);
@@ -221,6 +229,7 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
+	@Override
 	public boolean subscribe(FxcmInstrument instrument) {
 		try {
 
@@ -257,7 +266,7 @@ public class FxcmRestService implements IFxcmRestService {
 			Set<String> symbols = new TreeSet<>();
 			Enumeration<TradingSecurity> securities = status.getSecurities();
 			while (securities.hasMoreElements()) {
-				TradingSecurity security = (TradingSecurity) securities.nextElement();
+				TradingSecurity security = securities.nextElement();
 				String symbol = security.getSymbol();
 				if (symbol.equals(instrument.getSymbol())) {
 					return security;
@@ -271,4 +280,35 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
+	@Override
+	public IStreamingService getStreamingService() {
+		return streaming;
+	}
+
+	public class FxcmStreamingService extends StreamingService {
+
+		@Override
+		public void register(IInstrumentPriceStream stream) {
+			super.registerStream(stream);
+
+			// Subscribe
+			FxcmInstrument instrument = (FxcmInstrument) stream.getInstrument();
+			subscribe(instrument);
+		}
+
+		@Override
+		public void unregister(IInstrument instrument) {
+		}
+
+		@Override
+		public void connect() {
+			// Nothing to do
+		}
+
+		@Override
+		public boolean isConnected() {
+			return true;
+		}
+
+	}
 }
