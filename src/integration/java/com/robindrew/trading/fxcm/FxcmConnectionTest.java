@@ -4,7 +4,6 @@ import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 
 import org.junit.Test;
 
-import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
@@ -24,7 +23,9 @@ public class FxcmConnectionTest {
 		FxcmSession session = new FxcmSession(credentials, environment);
 		FxcmRestService rest = new FxcmRestService(session);
 		rest.login();
-
+		// rest.getTradingSessionStatus();
+		rest.getAccounts();
+		// rest.getPositions();
 		Threads.sleepForever();
 
 	}
