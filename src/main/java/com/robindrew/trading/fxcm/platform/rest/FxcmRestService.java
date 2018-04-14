@@ -39,6 +39,7 @@ import com.robindrew.trading.fxcm.platform.rest.getpositions.GetPositionsRespons
 import com.robindrew.trading.fxcm.platform.rest.getpositions.PositionReportHolder;
 import com.robindrew.trading.fxcm.platform.rest.response.ResponseFutureCache;
 import com.robindrew.trading.fxcm.platform.rest.response.ResponseFutureCache.ResponseFuture;
+import com.robindrew.trading.platform.TradingPlatformException;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
@@ -94,7 +95,7 @@ public class FxcmRestService implements IFxcmRestService {
 			getTradingSessionStatus();
 
 		} catch (Exception e) {
-			throw Java.propagate(e);
+			throw new TradingPlatformException("login() failed", e);
 		}
 	}
 
@@ -121,14 +122,19 @@ public class FxcmRestService implements IFxcmRestService {
 	}
 
 	public List<IPosition> getPositions() {
-		String requestId = gateway.requestOpenPositions();
-		GetPositionsResponse positions = gatewayResponses.awaitAndGet(requestId);
+		try {
+			String requestId = gateway.requestOpenPositions();
+			GetPositionsResponse positions = gatewayResponses.awaitAndGet(requestId);
 
-		List<IPosition> list = new ArrayList<>();
-		for (PositionReport report : positions.getReportList()) {
-			list.add(new PositionReportHolder(report));
+			List<IPosition> list = new ArrayList<>();
+			for (PositionReport report : positions.getReportList()) {
+				list.add(new PositionReportHolder(report));
+			}
+			return list;
+
+		} catch (Exception e) {
+			throw new TradingPlatformException("getPositions() failed", e);
 		}
-		return list;
 	}
 
 	@Override
