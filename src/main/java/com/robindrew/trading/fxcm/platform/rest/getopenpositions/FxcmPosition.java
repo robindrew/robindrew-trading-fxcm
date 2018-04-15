@@ -15,9 +15,10 @@ import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.trade.TradeDirection;
 
-public class OpenPositionHolder implements IPosition {
+public class FxcmPosition implements IPosition {
 
 	private final String id;
+	private final String account;
 	private final CurrencyCode currency;
 	private final LocalDateTime openDate;
 	private final FxcmInstrument instrument;
@@ -25,8 +26,9 @@ public class OpenPositionHolder implements IPosition {
 	private final BigDecimal tradeSize;
 	private final TradeDirection direction;
 
-	public OpenPositionHolder(PositionReport report) {
-		this.id = report.getOrderID();
+	public FxcmPosition(PositionReport report) {
+		this.id = report.getFXCMPosID();
+		this.account = report.getAccount();
 		this.currency = CurrencyCode.valueOf(report.getCurrency());
 		this.openDate = toLocalDateTime(report.getFXCMPosOpenTime());
 		this.instrument = toFxcmInstrument(report.getInstrument());
@@ -34,6 +36,10 @@ public class OpenPositionHolder implements IPosition {
 		this.tradeSize = toBigDecimal(report.getPositionQty().getQty());
 		this.direction = toDirection(report.getPositionQty().getSide());
 		// TODO: Parse stop and limit if available?
+	}
+
+	public String getAccount() {
+		return account;
 	}
 
 	@Override

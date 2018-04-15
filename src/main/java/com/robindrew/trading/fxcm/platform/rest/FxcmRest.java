@@ -81,4 +81,12 @@ public class FxcmRest {
 		return new BigDecimal(value).setScale(10, HALF_UP).stripTrailingZeros();
 	}
 
+	public static ISide toSide(TradeDirection direction) {
+		if (direction.isBuy()) {
+			return SideFactory.BUY;
+		} else {
+			return SideFactory.SELL;
+		}
+	}
+
 }

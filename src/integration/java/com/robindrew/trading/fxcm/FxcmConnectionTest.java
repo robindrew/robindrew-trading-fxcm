@@ -10,6 +10,7 @@ import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
 import com.robindrew.trading.fxcm.platform.FxcmSession;
 import com.robindrew.trading.fxcm.platform.rest.FxcmRestService;
+import com.robindrew.trading.fxcm.platform.rest.getopenpositions.FxcmPosition;
 
 public class FxcmConnectionTest {
 
@@ -25,8 +26,10 @@ public class FxcmConnectionTest {
 		FxcmRestService rest = new FxcmRestService(session);
 		rest.login();
 
-		rest.getAccounts();
-		rest.getPositions();
+		for (FxcmPosition position : rest.getPositions()) {
+			rest.closePosition(position);
+			break;
+		}
 
 		Threads.sleep(10, SECONDS);
 	}

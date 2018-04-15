@@ -74,7 +74,7 @@ public class FxcmInstrument extends Instrument {
 	/** NZD/JPY. */
 	public static final FxcmInstrument SPOT_NZD_JPY = new FxcmInstrument("NZD/JPY", NZD_JPY, 1, 40000, 190000);
 	/** NZD/USD. */
-	public static final FxcmInstrument SPOT_NZD_USD = new FxcmInstrument("NZD/USD", NZD_USD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_NZD_USD = new FxcmInstrument("NZD/USD", NZD_USD, 5, 40000, 190000);
 	/** USD/CAD. */
 	public static final FxcmInstrument SPOT_USD_CAD = new FxcmInstrument("USD/CAD", USD_CAD, 6, 40000, 190000);
 	/** USD/CHF. */

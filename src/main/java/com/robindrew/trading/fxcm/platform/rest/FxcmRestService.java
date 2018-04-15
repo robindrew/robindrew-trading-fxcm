@@ -1,5 +1,6 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
+import static com.fxcm.external.api.util.MessageGenerator.generateCloseMarketOrder;
 import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toFxcmInstrument;
 import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toPriceCandle;
 
@@ -19,6 +20,7 @@ import com.fxcm.external.api.transport.GatewayFactory;
 import com.fxcm.external.api.transport.IGateway;
 import com.fxcm.external.api.transport.listeners.IGenericMessageListener;
 import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
+import com.fxcm.fix.ISide;
 import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
 import com.fxcm.fix.TradingSecurity;
@@ -27,26 +29,25 @@ import com.fxcm.fix.posttrade.PositionReport;
 import com.fxcm.fix.pretrade.MarketDataRequest;
 import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
+import com.fxcm.fix.trade.OrderSingle;
 import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
 import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.IInstrument;
-import com.robindrew.trading.account.ITradingAccount;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
+import com.robindrew.trading.fxcm.platform.rest.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.fxcm.platform.rest.getaccounts.GetAccountsResponse;
-import com.robindrew.trading.fxcm.platform.rest.getaccounts.TradingAccountHolder;
+import com.robindrew.trading.fxcm.platform.rest.getopenpositions.FxcmPosition;
 import com.robindrew.trading.fxcm.platform.rest.getopenpositions.GetOpenPositionsResponse;
-import com.robindrew.trading.fxcm.platform.rest.getopenpositions.OpenPositionHolder;
 import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache;
 import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache.GatewayResponse;
 import com.robindrew.trading.platform.TradingPlatformException;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
-import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.price.candle.IPriceCandle;
 
 public class FxcmRestService implements IFxcmRestService {
@@ -92,7 +93,7 @@ public class FxcmRestService implements IFxcmRestService {
 			timer.stop();
 			log.info("login() took {}", timer);
 
-			// Immediately get the session status
+			// We are required to get the session status immediately after login
 			getTradingSessionStatus();
 
 		} catch (Exception e) {
@@ -105,12 +106,31 @@ public class FxcmRestService implements IFxcmRestService {
 		gateway.logout();
 	}
 
-	// cOpenOrderMassID = fxcmGateway.requestOpenOrders();
-	// log.info(">>> requestOpenOrders = " + cOpenOrderMassID);
-	// cClosedPositionMassID = fxcmGateway.requestClosedPositions();
-	// log.info(">>> requestClosedPositions = " + cClosedPositionMassID);
+	public void closePosition(FxcmPosition position) {
+		try {
+			String id = position.getId();
+			String accountId = position.getAccount();
+			double quantity = position.getTradeSize().doubleValue();
+			ISide side = FxcmRest.toSide(position.getDirection().invert());
+			String symbol = position.getInstrument().getName();
+			OrderSingle close = generateCloseMarketOrder(id, accountId, quantity, side, symbol, "Completely close position");
 
-	public List<ITradingAccount> getAccounts() {
+			log.info("closePosition()");
+			Stopwatch timer = Stopwatch.createStarted();
+
+			String requestId = gateway.sendMessage(close);
+			ITransportable response = gatewayResponses.getAndClose(requestId);
+			System.out.println(response);
+
+			timer.stop();
+			log.info("closePosition() took {}", timer);
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
+		}
+	}
+
+	public List<FxcmTradingAccount> getAccounts() {
 		log.info("getAccounts()");
 		Stopwatch timer = Stopwatch.createStarted();
 
@@ -120,9 +140,9 @@ public class FxcmRestService implements IFxcmRestService {
 			// Wait for the accounts
 			GetAccountsResponse accounts = response.populate(new GetAccountsResponse());
 
-			List<ITradingAccount> list = new ArrayList<>();
+			List<FxcmTradingAccount> list = new ArrayList<>();
 			for (CollateralReport report : accounts.getReportList()) {
-				ITradingAccount account = new TradingAccountHolder(report);
+				FxcmTradingAccount account = new FxcmTradingAccount(report);
 				log.info("{}", account);
 				list.add(account);
 			}
@@ -136,7 +156,7 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
-	public List<IPosition> getPositions() {
+	public List<FxcmPosition> getPositions() {
 		log.info("getPositions()");
 		Stopwatch timer = Stopwatch.createStarted();
 
@@ -146,9 +166,9 @@ public class FxcmRestService implements IFxcmRestService {
 			// Wait for the positions
 			GetOpenPositionsResponse positions = response.populate(new GetOpenPositionsResponse());
 
-			List<IPosition> list = new ArrayList<>();
+			List<FxcmPosition> list = new ArrayList<>();
 			for (PositionReport report : positions.getReportList()) {
-				IPosition position = new OpenPositionHolder(report);
+				FxcmPosition position = new FxcmPosition(report);
 				log.info("{}", position);
 				list.add(position);
 			}
