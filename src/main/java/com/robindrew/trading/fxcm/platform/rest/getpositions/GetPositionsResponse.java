@@ -5,17 +5,18 @@ import java.util.List;
 
 import com.fxcm.fix.posttrade.PositionReport;
 import com.fxcm.fix.posttrade.RequestForPositionsAck;
+import com.fxcm.messaging.ITransportable;
 import com.google.common.collect.ImmutableList;
-import com.robindrew.trading.fxcm.platform.rest.response.IResponseList;
+import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache.GatewayResponse;
+import com.robindrew.trading.fxcm.platform.rest.response.ResponseFuturePopulator;
 
-public class GetPositionsResponse implements IResponseList {
+public class GetPositionsResponse extends ResponseFuturePopulator {
 
-	private final RequestForPositionsAck ack;
-	private final List<PositionReport> reportList;
+	private RequestForPositionsAck ack;
+	private List<PositionReport> reportList = new ArrayList<>();
 
-	public GetPositionsResponse(RequestForPositionsAck ack) {
-		this.ack = ack;
-		this.reportList = new ArrayList<>(ack.getTotalNumPosReports());
+	public GetPositionsResponse(GatewayResponse future) {
+		super(future);
 	}
 
 	public RequestForPositionsAck getAck() {
@@ -27,12 +28,22 @@ public class GetPositionsResponse implements IResponseList {
 	}
 
 	@Override
-	public boolean isReady() {
-		return reportList.size() == ack.getTotalNumPosReports();
+	public boolean populate(List<ITransportable> list) {
+
+		// Ready to be populated?
+		RequestForPositionsAck ack = (RequestForPositionsAck) list.remove(0);
+		int count = ack.getTotalNumPosReports();
+		if (count != list.size()) {
+			return false;
+		}
+
+		// Populate!
+		this.ack = ack;
+		for (ITransportable element : list) {
+			this.reportList.add((PositionReport) element);
+		}
+
+		return true;
 	}
 
-	@Override
-	public void addResponse(Object response) {
-		reportList.add((PositionReport) response);
-	}
 }

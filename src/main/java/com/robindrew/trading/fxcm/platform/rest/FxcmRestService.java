@@ -1,7 +1,7 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
 import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toFxcmInstrument;
-import static com.robindrew.trading.price.decimal.Decimals.toInt;
+import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toPriceCandle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
 import com.fxcm.fix.TradingSecurity;
 import com.fxcm.fix.posttrade.PositionReport;
-import com.fxcm.fix.posttrade.RequestForPositionsAck;
 import com.fxcm.fix.pretrade.MarketDataRequest;
 import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
@@ -37,16 +36,14 @@ import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.rest.getpositions.GetPositionsResponse;
 import com.robindrew.trading.fxcm.platform.rest.getpositions.PositionReportHolder;
-import com.robindrew.trading.fxcm.platform.rest.response.ResponseFutureCache;
-import com.robindrew.trading.fxcm.platform.rest.response.ResponseFutureCache.ResponseFuture;
+import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache;
+import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache.GatewayResponse;
 import com.robindrew.trading.platform.TradingPlatformException;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
 import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.PriceCandle;
-import com.robindrew.trading.price.candle.TickPriceCandle;
 
 public class FxcmRestService implements IFxcmRestService {
 
@@ -54,7 +51,7 @@ public class FxcmRestService implements IFxcmRestService {
 
 	private final IFxcmSession session;
 	private final IGateway gateway;
-	private final ResponseFutureCache gatewayResponses = new ResponseFutureCache();
+	private final GatewayResponseCache gatewayResponses = new GatewayResponseCache();
 	private final ResponseListener responseListener = new ResponseListener();
 	private final StatusListener statusListener = new StatusListener();
 	private final FxcmStreamingService streaming = new FxcmStreamingService();
@@ -117,14 +114,16 @@ public class FxcmRestService implements IFxcmRestService {
 
 	public void getAccounts() {
 		String requestId = gateway.requestAccounts();
-		Object response = gatewayResponses.awaitAndGet(requestId);
+		Object response = gatewayResponses.getAndClose(requestId);
 		System.out.println(response);
 	}
 
 	public List<IPosition> getPositions() {
-		try {
-			String requestId = gateway.requestOpenPositions();
-			GetPositionsResponse positions = gatewayResponses.awaitAndGet(requestId);
+		String requestId = gateway.requestOpenPositions();
+		try (GatewayResponse response = gatewayResponses.get(requestId)) {
+
+			GetPositionsResponse positions = new GetPositionsResponse(response);
+			positions.populate();
 
 			List<IPosition> list = new ArrayList<>();
 			for (PositionReport report : positions.getReportList()) {
@@ -141,16 +140,11 @@ public class FxcmRestService implements IFxcmRestService {
 	public TradingSessionStatus getTradingSessionStatus() {
 		log.info("getTradingSessionStatus()");
 		Stopwatch timer = Stopwatch.createStarted();
-		TradingSessionStatus status = getTradingSessionStatusAsync().get();
+		String requestId = gateway.requestTradingSessionStatus();
+		TradingSessionStatus status = gatewayResponses.getAndClose(requestId);
 		timer.stop();
 		log.info("getTradingSessionStatus() took {}", timer);
 		return status;
-	}
-
-	@Override
-	public ResponseFuture<TradingSessionStatus> getTradingSessionStatusAsync() {
-		String requestId = gateway.requestTradingSessionStatus();
-		return gatewayResponses.get(requestId);
 	}
 
 	public Future<MarketDataSnapshot> getMarketDataSnapshot(FxcmInstrument instrument) {
@@ -165,7 +159,7 @@ public class FxcmRestService implements IFxcmRestService {
 
 			// Request / Response
 			String requestId = gateway.sendMessage(marketData);
-			return gatewayResponses.get(requestId);
+			return gatewayResponses.getAndClose(requestId);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -175,17 +169,6 @@ public class FxcmRestService implements IFxcmRestService {
 	public void handleMessage(ITransportable message) {
 		try {
 			String requestId = message.getRequestID();
-
-			// GetPositionsResponse
-			if (message instanceof RequestForPositionsAck) {
-				RequestForPositionsAck ack = (RequestForPositionsAck) message;
-				gatewayResponses.put(requestId, new GetPositionsResponse(ack));
-				return;
-			}
-			if (message instanceof PositionReport) {
-				gatewayResponses.put(requestId, message);
-				return;
-			}
 
 			// Is this message a request/response
 			if (requestId != null) {
@@ -237,43 +220,6 @@ public class FxcmRestService implements IFxcmRestService {
 		}
 	}
 
-	private IPriceCandle toPriceCandle(MarketDataSnapshot snapshot) throws Exception {
-
-		// Instrument
-		FxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
-
-		// Decimal Places
-		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
-
-		// Bid Prices
-		int bidOpenPrice = toInt(snapshot.getBidOpen(), decimalPlaces);
-		int bidHighPrice = toInt(snapshot.getBidHigh(), decimalPlaces);
-		int bidLowPrice = toInt(snapshot.getBidLow(), decimalPlaces);
-		int bidClosePrice = toInt(snapshot.getBidClose(), decimalPlaces);
-
-		// Ask Prices
-		int askOpenPrice = toInt(snapshot.getAskOpen(), decimalPlaces);
-		int askHighPrice = toInt(snapshot.getAskHigh(), decimalPlaces);
-		int askLowPrice = toInt(snapshot.getAskLow(), decimalPlaces);
-		int askClosePrice = toInt(snapshot.getAskClose(), decimalPlaces);
-
-		// Timestamps (UTC)
-		long openTime = snapshot.getOpenTimestamp().getTime();
-		long closeTime = snapshot.getCloseTimestamp().getTime();
-
-		// Is this a tick?
-		if (openTime == closeTime) {
-			if ((bidOpenPrice == bidClosePrice) && (bidHighPrice == bidLowPrice)) {
-				if ((askOpenPrice == askClosePrice) && (askHighPrice == askLowPrice)) {
-					return new TickPriceCandle(bidClosePrice, askClosePrice, closeTime, decimalPlaces);
-				}
-			}
-		}
-
-		// Nope, just a big fat candle!
-		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
-	}
-
 	public void handleMessage(ISessionStatus message) {
 		if (log.isDebugEnabled()) {
 			log.debug("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
@@ -309,7 +255,7 @@ public class FxcmRestService implements IFxcmRestService {
 			String requestId = gateway.sendMessage(request);
 
 			// Wait for the response
-			MarketDataSnapshot snapshot = gatewayResponses.awaitAndGet(requestId);
+			MarketDataSnapshot snapshot = gatewayResponses.getAndClose(requestId);
 			return instrument.getSymbol().equals(snapshot.getInstrument().getSymbol());
 
 		} catch (Exception e) {

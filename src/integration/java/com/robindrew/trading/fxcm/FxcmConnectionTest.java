@@ -27,6 +27,5 @@ public class FxcmConnectionTest {
 		rest.getAccounts();
 		// rest.getPositions();
 		Threads.sleepForever();
-
 	}
 }
