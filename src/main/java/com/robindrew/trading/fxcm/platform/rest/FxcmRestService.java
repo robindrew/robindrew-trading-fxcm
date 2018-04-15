@@ -22,6 +22,7 @@ import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
 import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
 import com.fxcm.fix.TradingSecurity;
+import com.fxcm.fix.posttrade.CollateralReport;
 import com.fxcm.fix.posttrade.PositionReport;
 import com.fxcm.fix.pretrade.MarketDataRequest;
 import com.fxcm.fix.pretrade.MarketDataSnapshot;
@@ -32,10 +33,13 @@ import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.IInstrument;
+import com.robindrew.trading.account.ITradingAccount;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
-import com.robindrew.trading.fxcm.platform.rest.getpositions.GetPositionsResponse;
-import com.robindrew.trading.fxcm.platform.rest.getpositions.PositionReportHolder;
+import com.robindrew.trading.fxcm.platform.rest.getaccounts.GetAccountsResponse;
+import com.robindrew.trading.fxcm.platform.rest.getaccounts.TradingAccountHolder;
+import com.robindrew.trading.fxcm.platform.rest.getopenpositions.GetOpenPositionsResponse;
+import com.robindrew.trading.fxcm.platform.rest.getopenpositions.OpenPositionHolder;
 import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache;
 import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache.GatewayResponse;
 import com.robindrew.trading.platform.TradingPlatformException;
@@ -101,34 +105,56 @@ public class FxcmRestService implements IFxcmRestService {
 		gateway.logout();
 	}
 
-	// cTradingSessionStatusID = fxcmGateway.requestTradingSessionStatus();
-	// log.info(">>> requestTradingSessionStatus = " + cTradingSessionStatusID);
-	// cAccountMassID = fxcmGateway.requestAccounts();
-	// log.info(">>> requestAccounts = " + cAccountMassID);
 	// cOpenOrderMassID = fxcmGateway.requestOpenOrders();
 	// log.info(">>> requestOpenOrders = " + cOpenOrderMassID);
-	// cOpenPositionMassID = fxcmGateway.requestOpenPositions();
-	// log.info(">>> requestOpenPositions = " + cOpenPositionMassID);
 	// cClosedPositionMassID = fxcmGateway.requestClosedPositions();
 	// log.info(">>> requestClosedPositions = " + cClosedPositionMassID);
 
-	public void getAccounts() {
+	public List<ITradingAccount> getAccounts() {
+		log.info("getAccounts()");
+		Stopwatch timer = Stopwatch.createStarted();
+
 		String requestId = gateway.requestAccounts();
-		Object response = gatewayResponses.getAndClose(requestId);
-		System.out.println(response);
+		try (GatewayResponse response = gatewayResponses.get(requestId)) {
+
+			// Wait for the accounts
+			GetAccountsResponse accounts = response.populate(new GetAccountsResponse());
+
+			List<ITradingAccount> list = new ArrayList<>();
+			for (CollateralReport report : accounts.getReportList()) {
+				ITradingAccount account = new TradingAccountHolder(report);
+				log.info("{}", account);
+				list.add(account);
+			}
+
+			timer.stop();
+			log.info("getAccounts() took {}", timer);
+			return list;
+
+		} catch (Exception e) {
+			throw new TradingPlatformException("getPositions() failed", e);
+		}
 	}
 
 	public List<IPosition> getPositions() {
+		log.info("getPositions()");
+		Stopwatch timer = Stopwatch.createStarted();
+
 		String requestId = gateway.requestOpenPositions();
 		try (GatewayResponse response = gatewayResponses.get(requestId)) {
 
-			GetPositionsResponse positions = new GetPositionsResponse(response);
-			positions.populate();
+			// Wait for the positions
+			GetOpenPositionsResponse positions = response.populate(new GetOpenPositionsResponse());
 
 			List<IPosition> list = new ArrayList<>();
 			for (PositionReport report : positions.getReportList()) {
-				list.add(new PositionReportHolder(report));
+				IPosition position = new OpenPositionHolder(report);
+				log.info("{}", position);
+				list.add(position);
 			}
+
+			timer.stop();
+			log.info("getPositions() took {}", timer);
 			return list;
 
 		} catch (Exception e) {
@@ -140,8 +166,10 @@ public class FxcmRestService implements IFxcmRestService {
 	public TradingSessionStatus getTradingSessionStatus() {
 		log.info("getTradingSessionStatus()");
 		Stopwatch timer = Stopwatch.createStarted();
+
 		String requestId = gateway.requestTradingSessionStatus();
 		TradingSessionStatus status = gatewayResponses.getAndClose(requestId);
+
 		timer.stop();
 		log.info("getTradingSessionStatus() took {}", timer);
 		return status;

@@ -18,7 +18,7 @@ import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 
 /**
- * The Gateway Response Cache handles the asynchronous responses received for gateway requests.
+ * The Gateway Response Cache handles asynchronous responses received for gateway requests.
  */
 public class GatewayResponseCache {
 
@@ -64,7 +64,12 @@ public class GatewayResponseCache {
 
 		@Override
 		public void close() {
-			cache.removeAll(requestId);
+			lock.lock();
+			try {
+				cache.removeAll(requestId);
+			} finally {
+				lock.unlock();
+			}
 		}
 
 		@Override
@@ -79,23 +84,19 @@ public class GatewayResponseCache {
 
 		@Override
 		public List<ITransportable> get() {
-			try {
-				return awaitResponse();
-			} catch (Exception e) {
-				throw Java.propagate(e);
-			}
-		}
-
-		private List<ITransportable> awaitResponse() throws InterruptedException {
 			lock.lock();
 			try {
+
 				while (true) {
-					Collection<ITransportable> value = cache.get(requestId);
-					if (!value.isEmpty()) {
-						return new LinkedList<>(value);
+					Collection<ITransportable> values = cache.get(requestId);
+					if (!values.isEmpty()) {
+						return new LinkedList<>(values);
 					}
 					condition.await();
 				}
+
+			} catch (Exception e) {
+				throw Java.propagate(e);
 			} finally {
 				lock.unlock();
 			}
@@ -109,6 +110,28 @@ public class GatewayResponseCache {
 		@Override
 		public boolean cancel(boolean mayInterruptIfRunning) {
 			throw new UnsupportedOperationException();
+		}
+
+		public <P extends IGatewayResponsePopulator> P populate(P populator) {
+			lock.lock();
+			try {
+
+				while (true) {
+					Collection<ITransportable> values = cache.get(requestId);
+					if (!values.isEmpty()) {
+						List<ITransportable> list = new LinkedList<>(values);
+						if (populator.populate(list)) {
+							return populator;
+						}
+					}
+					condition.await();
+				}
+
+			} catch (Exception e) {
+				throw Java.propagate(e);
+			} finally {
+				lock.unlock();
+			}
 		}
 	}
 }

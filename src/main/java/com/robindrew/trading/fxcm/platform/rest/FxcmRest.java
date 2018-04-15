@@ -3,7 +3,9 @@ package com.robindrew.trading.fxcm.platform.rest;
 import static com.robindrew.trading.price.decimal.Decimals.toInt;
 import static com.robindrew.trading.trade.TradeDirection.BUY;
 import static com.robindrew.trading.trade.TradeDirection.SELL;
+import static java.math.RoundingMode.HALF_UP;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fxcm.fix.ISide;
@@ -73,6 +75,10 @@ public class FxcmRest {
 
 	public static LocalDateTime toLocalDateTime(UTCTimestamp timestamp) {
 		return Dates.toLocalDateTime(timestamp.getTime());
+	}
+
+	public static BigDecimal toBigDecimal(double value) {
+		return new BigDecimal(value).setScale(10, HALF_UP).stripTrailingZeros();
 	}
 
 }

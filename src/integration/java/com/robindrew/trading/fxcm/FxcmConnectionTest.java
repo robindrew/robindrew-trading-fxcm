@@ -1,6 +1,7 @@
 package com.robindrew.trading.fxcm;
 
 import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.junit.Test;
 
@@ -23,9 +24,10 @@ public class FxcmConnectionTest {
 		FxcmSession session = new FxcmSession(credentials, environment);
 		FxcmRestService rest = new FxcmRestService(session);
 		rest.login();
-		// rest.getTradingSessionStatus();
+
 		rest.getAccounts();
-		// rest.getPositions();
-		Threads.sleepForever();
+		rest.getPositions();
+
+		Threads.sleep(10, SECONDS);
 	}
 }
