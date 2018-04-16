@@ -31,6 +31,11 @@ public class GetAccountsCommand extends FxcmGatewayCommand<List<FxcmTradingAccou
 				list.add(account);
 			}
 
+			// Set the default account (if only one is available)
+			if (list.size() == 1) {
+				gateway.setDefaultAccount(list.get(0));
+			}
+
 			return list;
 		}
 	}

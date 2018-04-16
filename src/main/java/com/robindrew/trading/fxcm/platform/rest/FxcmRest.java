@@ -88,5 +88,4 @@ public class FxcmRest {
 			return SideFactory.SELL;
 		}
 	}
-
 }

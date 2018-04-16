@@ -25,10 +25,12 @@ import com.robindrew.trading.fxcm.platform.rest.getopenpositions.FxcmPosition;
 import com.robindrew.trading.fxcm.platform.rest.getopenpositions.GetOpenPositionsCommand;
 import com.robindrew.trading.fxcm.platform.rest.login.LoginCommand;
 import com.robindrew.trading.fxcm.platform.rest.logout.LogoutCommand;
+import com.robindrew.trading.fxcm.platform.rest.openposition.OpenPositionCommand;
 import com.robindrew.trading.fxcm.platform.rest.tradingsessionstatus.TradingSessionStatusCommand;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
+import com.robindrew.trading.position.order.IPositionOrder;
 
 public class FxcmRestService implements IFxcmRestService {
 
@@ -60,6 +62,10 @@ public class FxcmRestService implements IFxcmRestService {
 	@Override
 	public TradingSessionStatus getTradingSessionStatus() {
 		return new TradingSessionStatusCommand().execute(gateway);
+	}
+
+	public void openPosition(IPositionOrder order) {
+		new OpenPositionCommand(order).execute(gateway);
 	}
 
 	public void closePosition(FxcmPosition position) {
