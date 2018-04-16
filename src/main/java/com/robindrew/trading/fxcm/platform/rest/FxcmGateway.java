@@ -69,7 +69,9 @@ public class FxcmGateway {
 
 			// Is this message a request/response
 			if (requestId != null) {
-				log.info("messageArrived(requestId={}, type={})", requestId, message.getClass().getName());
+				log.info("[Message] requestId={}", requestId);
+				log.info("[Message] type={}", message.getClass().getName());
+				log.info("[Message] content={}", message);
 				responseCache.put(requestId, message);
 				return;
 			}
