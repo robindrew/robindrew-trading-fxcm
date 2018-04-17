@@ -27,6 +27,7 @@ import com.robindrew.trading.fxcm.platform.rest.login.LoginCommand;
 import com.robindrew.trading.fxcm.platform.rest.logout.LogoutCommand;
 import com.robindrew.trading.fxcm.platform.rest.openposition.OpenPositionCommand;
 import com.robindrew.trading.fxcm.platform.rest.tradingsessionstatus.TradingSessionStatusCommand;
+import com.robindrew.trading.log.ITransactionLog;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
@@ -37,10 +38,16 @@ public class FxcmRestService implements IFxcmRestService {
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
 	private final FxcmStreamingService streaming = new FxcmStreamingService();
+	private final ITransactionLog transactions;
 
-	public FxcmRestService(IFxcmSession session) {
+	public FxcmRestService(IFxcmSession session, ITransactionLog transactions) {
 		this.session = Check.notNull("session", session);
-		this.gateway = new FxcmGateway();
+		this.transactions = Check.notNull("transactions", transactions);
+		this.gateway = new FxcmGateway(transactions);
+	}
+
+	public ITransactionLog getTransactionLog() {
+		return transactions;
 	}
 
 	@Override

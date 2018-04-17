@@ -3,6 +3,7 @@ package com.robindrew.trading.fxcm;
 import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 import org.junit.Test;
@@ -14,6 +15,7 @@ import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
 import com.robindrew.trading.fxcm.platform.FxcmSession;
 import com.robindrew.trading.fxcm.platform.rest.FxcmRestService;
 import com.robindrew.trading.fxcm.platform.rest.getopenpositions.FxcmPosition;
+import com.robindrew.trading.log.TransactionLog;
 import com.robindrew.trading.position.order.IPositionOrder;
 import com.robindrew.trading.position.order.PositionOrder;
 import com.robindrew.trading.trade.TradeDirection;
@@ -29,7 +31,10 @@ public class FxcmConnectionTest {
 		FxcmCredentials credentials = new FxcmCredentials(username, password);
 		FxcmEnvironment environment = DEMO;
 		FxcmSession session = new FxcmSession(credentials, environment);
-		FxcmRestService rest = new FxcmRestService(session);
+		TransactionLog transactionLog = new TransactionLog(new File("c:/temp/"));
+		transactionLog.start();
+
+		FxcmRestService rest = new FxcmRestService(session, transactionLog);
 		rest.login();
 		rest.getAccounts();
 

@@ -1,6 +1,5 @@
 package com.robindrew.trading.fxcm.platform.rest;
 
-import static com.robindrew.common.text.Strings.json;
 import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toFxcmInstrument;
 import static com.robindrew.trading.fxcm.platform.rest.FxcmRest.toPriceCandle;
 
@@ -14,12 +13,12 @@ import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
 import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
-import com.robindrew.common.text.Strings;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.rest.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.fxcm.platform.rest.response.GatewayResponseCache;
+import com.robindrew.trading.log.ITransactionLog;
 import com.robindrew.trading.price.candle.IPriceCandle;
 
 public class FxcmGateway {
@@ -30,13 +29,16 @@ public class FxcmGateway {
 	private final GatewayResponseCache responseCache;
 	private final ResponseListener responseListener;
 	private final StatusListener statusListener;
+	private final ITransactionLog transactions;
+
 	private volatile String defaultAccount;
 
-	public FxcmGateway() {
+	public FxcmGateway(ITransactionLog transactions) {
 		this.gateway = GatewayFactory.createGateway();
 		this.responseCache = new GatewayResponseCache();
 		this.responseListener = new ResponseListener();
 		this.statusListener = new StatusListener();
+		this.transactions = Check.notNull("transactions", transactions);
 
 		// Register listeners
 		gateway.registerGenericMessageListener(responseListener);
@@ -76,20 +78,31 @@ public class FxcmGateway {
 
 	public <T extends ITransportable> T execute(ITransportable message) {
 		try {
-			String requestId = gateway.sendMessage(message);
+			String requestId = sendMessage(message);
 			return responseCache.getAndClose(requestId);
 		} catch (Exception e) {
 			throw Java.propagate(e);
 		}
 	}
 
+	private String sendMessage(ITransportable message) throws Exception {
+		logMessage("sendMessage", message);
+		return gateway.sendMessage(message);
+	}
+
+	private void logMessage(String method, Object message) {
+		String type = message.getClass().getSimpleName();
+		transactions.log(method + "(" + type + ")", message);
+	}
+
 	public void handleResponse(ITransportable response) {
 		try {
+			logMessage("messageArrived", response);
+
 			String requestId = response.getRequestID();
 
 			// Is this message a request/response
 			if (requestId != null) {
-				log.debug("[Response] {}\n{}", response.getClass().getSimpleName(), json(response));
 				responseCache.put(requestId, response);
 				return;
 			}
@@ -108,8 +121,6 @@ public class FxcmGateway {
 	}
 
 	private void handleMarketDataSnapshot(MarketDataSnapshot snapshot) throws Exception {
-		log.info("[Tick]\n{}", Strings.json(snapshot, true));
-
 		FxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
 		IPriceCandle candle = toPriceCandle(snapshot);
 		handlePriceTick(instrument, candle);
@@ -118,9 +129,11 @@ public class FxcmGateway {
 	private void handlePriceTick(FxcmInstrument instrument, IPriceCandle candle) {
 	}
 
-	public void handleMessage(ISessionStatus message) {
+	public void handleStatus(ISessionStatus status) {
+		String type = status.getClass().getSimpleName();
+		transactions.log("messageArrived(" + type + ")", status);
 		if (log.isDebugEnabled()) {
-			log.debug("Status Message: ({}) '{}'", message.getStatusCode(), message.getStatusMessage());
+			log.debug("Status Message: ({}) '{}'", status.getStatusCode(), status.getStatusMessage());
 		}
 	}
 
@@ -136,7 +149,7 @@ public class FxcmGateway {
 
 		@Override
 		public void messageArrived(ISessionStatus message) {
-			handleMessage(message);
+			handleStatus(message);
 		}
 	}
 
