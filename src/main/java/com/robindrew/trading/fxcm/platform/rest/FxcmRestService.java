@@ -5,7 +5,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Future;
 
 import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
@@ -59,6 +58,7 @@ public class FxcmRestService implements IFxcmRestService {
 	public void login() {
 		new LoginCommand(session).execute(gateway);
 		getTradingSessionStatus();
+		getTradingSessionStatus();
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class FxcmRestService implements IFxcmRestService {
 		return new GetOpenPositionsCommand().execute(gateway);
 	}
 
-	public Future<MarketDataSnapshot> getMarketDataSnapshot(FxcmInstrument instrument) {
+	public MarketDataSnapshot getMarketDataSnapshot(FxcmInstrument instrument) {
 		try {
 
 			TradingSessionStatus status = getTradingSessionStatus();

@@ -39,6 +39,8 @@ public class FxcmConnectionTest {
 		rest.getAccounts();
 
 		FxcmInstrument instrument = FxcmInstrument.SPOT_EUR_USD;
+		rest.getMarketDataSnapshot(instrument);
+
 		TradeDirection direction = TradeDirection.BUY;
 		CurrencyCode currency = CurrencyCode.GBP;
 		BigDecimal tradeSize = new BigDecimal("1000");

@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fxcm.fix.posttrade.CollateralInquiry;
 import com.fxcm.fix.posttrade.CollateralReport;
 import com.robindrew.trading.fxcm.platform.rest.FxcmGateway;
 import com.robindrew.trading.fxcm.platform.rest.FxcmGatewayCommand;
@@ -18,7 +19,7 @@ public class GetAccountsCommand extends FxcmGatewayCommand<List<FxcmTradingAccou
 	@Override
 	public List<FxcmTradingAccount> executeCommand(FxcmGateway gateway) throws Exception {
 
-		String requestId = gateway.getGateway().requestAccounts();
+		String requestId = gateway.sendMessage(new CollateralInquiry());
 		try (GatewayResponse response = gateway.getResponseCache().get(requestId)) {
 
 			// Wait for the accounts

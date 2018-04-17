@@ -10,6 +10,7 @@ import com.fxcm.external.api.transport.GatewayFactory;
 import com.fxcm.external.api.transport.IGateway;
 import com.fxcm.external.api.transport.listeners.IGenericMessageListener;
 import com.fxcm.external.api.transport.listeners.IStatusMessageListener;
+import com.fxcm.fix.posttrade.CollateralReport;
 import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
@@ -77,17 +78,17 @@ public class FxcmGateway {
 	}
 
 	public <T extends ITransportable> T execute(ITransportable message) {
+		String requestId = sendMessage(message);
+		return responseCache.getAndClose(requestId);
+	}
+
+	public String sendMessage(ITransportable message) {
+		logMessage("Request", message);
 		try {
-			String requestId = sendMessage(message);
-			return responseCache.getAndClose(requestId);
+			return gateway.sendMessage(message);
 		} catch (Exception e) {
 			throw Java.propagate(e);
 		}
-	}
-
-	private String sendMessage(ITransportable message) throws Exception {
-		logMessage("sendMessage", message);
-		return gateway.sendMessage(message);
 	}
 
 	private void logMessage(String method, Object message) {
@@ -97,23 +98,30 @@ public class FxcmGateway {
 
 	public void handleResponse(ITransportable response) {
 		try {
-			logMessage("messageArrived", response);
-
 			String requestId = response.getRequestID();
 
 			// Is this message a request/response
 			if (requestId != null) {
+				logMessage("Response", response);
 				responseCache.put(requestId, response);
 				return;
 			}
 
-			// Handle snapshots (ticking prices)
+			// Handle published price snapshots (ticking prices)
+			// We do not record these in the transaction log - there are loads!
 			if (response instanceof MarketDataSnapshot) {
 				handleMarketDataSnapshot((MarketDataSnapshot) response);
 				return;
 			}
 
-			log.warn("Message not handled: " + response);
+			// How should we handle published Collateral Reports?
+			// These occur after opening or closing a position (possibly other actions too)
+			if (response instanceof CollateralReport) {
+			}
+
+			// Log unhandled messages so we can review them
+			logMessage("Published", response);
+			log.warn("Published message not handled: " + response);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -130,8 +138,6 @@ public class FxcmGateway {
 	}
 
 	public void handleStatus(ISessionStatus status) {
-		String type = status.getClass().getSimpleName();
-		transactions.log("messageArrived(" + type + ")", status);
 		if (log.isDebugEnabled()) {
 			log.debug("Status Message: ({}) '{}'", status.getStatusCode(), status.getStatusMessage());
 		}
