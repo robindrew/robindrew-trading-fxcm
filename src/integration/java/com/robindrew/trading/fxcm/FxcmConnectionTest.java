@@ -37,21 +37,24 @@ public class FxcmConnectionTest {
 		FxcmRestService rest = new FxcmRestService(session, transactionLog);
 		rest.login();
 		rest.getAccounts();
-
-		FxcmInstrument instrument = FxcmInstrument.SPOT_EUR_USD;
-		rest.getMarketDataSnapshot(instrument);
-
-		TradeDirection direction = TradeDirection.BUY;
-		CurrencyCode currency = CurrencyCode.GBP;
-		BigDecimal tradeSize = new BigDecimal("1000");
-		IPositionOrder order = new PositionOrder(instrument, direction, currency, tradeSize, 0, 0);
-		rest.openPosition(order);
-
-		Threads.sleep(10, SECONDS);
-
-		for (FxcmPosition position : rest.getPositions()) {
-			rest.closePosition(position);
+		for (String name : rest.getInstrumentNames()) {
+			System.out.println(name);
 		}
+
+//		FxcmInstrument instrument = FxcmInstrument.SPOT_EUR_USD;
+//		rest.getMarketDataSnapshot(instrument);
+//
+//		TradeDirection direction = TradeDirection.BUY;
+//		CurrencyCode currency = CurrencyCode.GBP;
+//		BigDecimal tradeSize = new BigDecimal("1000");
+//		IPositionOrder order = new PositionOrder(instrument, direction, currency, tradeSize, 0, 0);
+//		rest.openPosition(order);
+//
+//		Threads.sleep(10, SECONDS);
+//
+//		for (FxcmPosition position : rest.getPositions()) {
+//			rest.closePosition(position);
+//		}
 
 		Threads.sleep(10, SECONDS);
 	}

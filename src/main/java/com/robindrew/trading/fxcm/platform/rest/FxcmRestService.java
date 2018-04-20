@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fxcm.fix.Instrument;
 import com.fxcm.fix.SubscriptionRequestTypeFactory;
 import com.fxcm.fix.TradingSecurity;
@@ -34,6 +37,8 @@ import com.robindrew.trading.position.order.IPositionOrder;
 
 public class FxcmRestService implements IFxcmRestService {
 
+	private static final Logger log = LoggerFactory.getLogger(FxcmRestService.class);
+
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
 	private final FxcmStreamingService streaming = new FxcmStreamingService();
@@ -58,12 +63,26 @@ public class FxcmRestService implements IFxcmRestService {
 	public void login() {
 		new LoginCommand(session).execute(gateway);
 		getTradingSessionStatus();
-		getTradingSessionStatus();
 	}
 
 	@Override
 	public void logout() {
 		new LogoutCommand().execute(gateway);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Set<String> getInstrumentNames() {
+		TradingSessionStatus status = getTradingSessionStatus();
+		Set<String> names = new TreeSet<>();
+		List<TradingSecurity> securities = Collections.list(status.getSecurities());
+		for (TradingSecurity security : securities) {
+			try {
+				names.add(security.getSymbol());
+			} catch (Exception e) {
+				log.warn("Failed to get symbol for security: " + security);
+			}
+		}
+		return names;
 	}
 
 	@Override

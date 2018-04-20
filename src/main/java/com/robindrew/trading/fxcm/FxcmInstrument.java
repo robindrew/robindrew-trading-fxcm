@@ -36,64 +36,64 @@ import com.robindrew.trading.price.precision.PricePrecision;
 public class FxcmInstrument extends Instrument {
 
 	/** AUD/USD. */
-	public static final FxcmInstrument SPOT_AUD_USD = new FxcmInstrument("AUD/USD", AUD_USD, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_AUD_USD = new FxcmInstrument("AUD/USD", AUD_USD, 6);
 	/** AUD/CAD. */
-	public static final FxcmInstrument SPOT_AUD_CAD = new FxcmInstrument("AUD/CAD", AUD_CAD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_AUD_CAD = new FxcmInstrument("AUD/CAD", AUD_CAD, 1);
 	/** AUD/CHF. */
-	public static final FxcmInstrument SPOT_AUD_CHF = new FxcmInstrument("AUD/CHF", AUD_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_AUD_CHF = new FxcmInstrument("AUD/CHF", AUD_CHF, 1);
 	/** AUD/JPY. */
-	public static final FxcmInstrument SPOT_AUD_JPY = new FxcmInstrument("AUD/JPY", AUD_JPY, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_AUD_JPY = new FxcmInstrument("AUD/JPY", AUD_JPY, 1);
 	/** AUD/NZD. */
-	public static final FxcmInstrument SPOT_AUD_NZD = new FxcmInstrument("AUD/NZD", AUD_NZD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_AUD_NZD = new FxcmInstrument("AUD/NZD", AUD_NZD, 1);
 	/** CAD/CHF. */
-	public static final FxcmInstrument SPOT_CAD_CHF = new FxcmInstrument("CAD/CHF", CAD_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_CAD_CHF = new FxcmInstrument("CAD/CHF", CAD_CHF, 1);
 	/** EUR/AUD. */
-	public static final FxcmInstrument SPOT_EUR_AUD = new FxcmInstrument("EUR/AUD", EUR_AUD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_EUR_AUD = new FxcmInstrument("EUR/AUD", EUR_AUD, 1);
 	/** EUR/CHF. */
-	public static final FxcmInstrument SPOT_EUR_CHF = new FxcmInstrument("EUR/CHF", EUR_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_EUR_CHF = new FxcmInstrument("EUR/CHF", EUR_CHF, 1);
 	/** EUR/GBP. */
-	public static final FxcmInstrument SPOT_EUR_GBP = new FxcmInstrument("EUR/GBP", EUR_GBP, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_EUR_GBP = new FxcmInstrument("EUR/GBP", EUR_GBP, 1);
 	/** EUR/JPY. */
-	public static final FxcmInstrument SPOT_EUR_JPY = new FxcmInstrument("EUR/JPY", EUR_JPY, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_EUR_JPY = new FxcmInstrument("EUR/JPY", EUR_JPY, 1);
 	/** EUR/USD. */
-	public static final FxcmInstrument SPOT_EUR_USD = new FxcmInstrument("EUR/USD", EUR_USD, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_EUR_USD = new FxcmInstrument("EUR/USD", EUR_USD, 6);
 	/** GBP/CAD. */
-	public static final FxcmInstrument SPOT_GBP_CAD = new FxcmInstrument("GBP/CAD", GBP_CAD, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_CAD = new FxcmInstrument("GBP/CAD", GBP_CAD, 6);
 	/** GBP/CHF. */
-	public static final FxcmInstrument SPOT_GBP_CHF = new FxcmInstrument("GBP/CHF", GBP_CHF, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_CHF = new FxcmInstrument("GBP/CHF", GBP_CHF, 6);
 	/** GBP/JPY. */
-	public static final FxcmInstrument SPOT_GBP_JPY = new FxcmInstrument("GBP/JPY", GBP_JPY, 4, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_JPY = new FxcmInstrument("GBP/JPY", GBP_JPY, 4);
 	/** GBP/NZD. */
-	public static final FxcmInstrument SPOT_GBP_NZD = new FxcmInstrument("GBP/NZD", GBP_NZD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_NZD = new FxcmInstrument("GBP/NZD", GBP_NZD, 1);
 	/** GBP/USD. */
-	public static final FxcmInstrument SPOT_GBP_USD = new FxcmInstrument("GBP/USD", GBP_USD, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_GBP_USD = new FxcmInstrument("GBP/USD", GBP_USD, 6);
 	/** NZD/CAD. */
-	public static final FxcmInstrument SPOT_NZD_CAD = new FxcmInstrument("NZD/CAD", NZD_CAD, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_NZD_CAD = new FxcmInstrument("NZD/CAD", NZD_CAD, 1);
 	/** NZD/CHF. */
-	public static final FxcmInstrument SPOT_NZD_CHF = new FxcmInstrument("NZD/CHF", NZD_CHF, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_NZD_CHF = new FxcmInstrument("NZD/CHF", NZD_CHF, 1);
 	/** NZD/JPY. */
-	public static final FxcmInstrument SPOT_NZD_JPY = new FxcmInstrument("NZD/JPY", NZD_JPY, 1, 40000, 190000);
+	public static final FxcmInstrument SPOT_NZD_JPY = new FxcmInstrument("NZD/JPY", NZD_JPY, 1);
 	/** NZD/USD. */
-	public static final FxcmInstrument SPOT_NZD_USD = new FxcmInstrument("NZD/USD", NZD_USD, 5, 40000, 190000);
+	public static final FxcmInstrument SPOT_NZD_USD = new FxcmInstrument("NZD/USD", NZD_USD, 5);
 	/** USD/CAD. */
-	public static final FxcmInstrument SPOT_USD_CAD = new FxcmInstrument("USD/CAD", USD_CAD, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_USD_CAD = new FxcmInstrument("USD/CAD", USD_CAD, 6);
 	/** USD/CHF. */
-	public static final FxcmInstrument SPOT_USD_CHF = new FxcmInstrument("USD/CHF", USD_CHF, 6, 40000, 190000);
+	public static final FxcmInstrument SPOT_USD_CHF = new FxcmInstrument("USD/CHF", USD_CHF, 6);
 	/** USD/JPY. */
-	public static final FxcmInstrument SPOT_USD_JPY = new FxcmInstrument("USD/JPY", USD_JPY, 4, 40000, 190000);
+	public static final FxcmInstrument SPOT_USD_JPY = new FxcmInstrument("USD/JPY", USD_JPY, 4);
 
 	/** XAU/USD. */
-	public static final FxcmInstrument SPOT_GOLD = new FxcmInstrument("XAU/USD", Instruments.GOLD, 3, 40000, 190000);
+	public static final FxcmInstrument SPOT_GOLD = new FxcmInstrument("XAU/USD", Instruments.GOLD, 3);
 	/** XAU/USD. */
-	public static final FxcmInstrument SPOT_SILVER = new FxcmInstrument("XAG/USD", Instruments.GOLD, 3, 40000, 190000);
+	public static final FxcmInstrument SPOT_SILVER = new FxcmInstrument("XAG/USD", Instruments.GOLD, 3);
 
 	/** US30. */
-	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES, 2, 40000, 190000);
+	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES, 2);
 	/** UK100. */
-	public static final FxcmInstrument SPOT_FTSE_100 = new FxcmInstrument("UK100", FTSE_100, 2, 40000, 190000);
+	public static final FxcmInstrument SPOT_FTSE_100 = new FxcmInstrument("UK100", FTSE_100, 2);
 
 	/** US CRUDE. */
-	public static final FxcmInstrument SPOT_US_CRUDE = new FxcmInstrument("USOil", US_CRUDE_OIL, 4, 40000, 190000);
+	public static final FxcmInstrument SPOT_US_CRUDE = new FxcmInstrument("USOil", US_CRUDE_OIL, 4);
 
 	public static FxcmInstrument valueOf(String name) {
 		switch (name) {
@@ -160,9 +160,9 @@ public class FxcmInstrument extends Instrument {
 
 	private final IPricePrecision precision;
 
-	public FxcmInstrument(String name, IInstrument underlying, int decimalPlaces, int minPrice, int maxPrice) {
+	public FxcmInstrument(String name, IInstrument underlying, int decimalPlaces) {
 		super(name, underlying);
-		this.precision = new PricePrecision(decimalPlaces, minPrice, maxPrice);
+		this.precision = new PricePrecision(decimalPlaces);
 	}
 
 	public String getSymbol() {
