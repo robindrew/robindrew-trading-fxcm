@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.rest;
+package com.robindrew.trading.fxcm.platform.fix;
 
 import java.util.List;
 
@@ -13,15 +13,15 @@ import com.robindrew.trading.trade.funds.AccountFunds;
 
 public class FxcmPositionService extends PositionService {
 
-	private final FxcmRestService rest;
+	private final FxcmFixService fix;
 
-	public FxcmPositionService(FxcmRestService rest) {
-		this.rest = Check.notNull("rest", rest);
+	public FxcmPositionService(FxcmFixService fix) {
+		this.fix = Check.notNull("fix", fix);
 	}
 
 	@Override
 	public List<? extends IPosition> getAllPositions() {
-		return rest.getPositions();
+		return fix.getPositions();
 	}
 
 	@Override

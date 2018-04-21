@@ -11,7 +11,7 @@ import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
 import com.robindrew.trading.fxcm.platform.FxcmSession;
-import com.robindrew.trading.fxcm.platform.rest.FxcmRestService;
+import com.robindrew.trading.fxcm.platform.fix.FxcmFixService;
 import com.robindrew.trading.log.TransactionLog;
 
 public class FxcmConnectionTest {
@@ -28,10 +28,10 @@ public class FxcmConnectionTest {
 		TransactionLog transactionLog = new TransactionLog(new File("c:/temp/"));
 		transactionLog.start();
 
-		FxcmRestService rest = new FxcmRestService(session, transactionLog);
-		rest.login();
-		rest.getAccounts();
-		for (String name : rest.getInstrumentNames()) {
+		FxcmFixService fix = new FxcmFixService(session, transactionLog);
+		fix.login();
+		fix.getAccounts();
+		for (String name : fix.getInstrumentNames()) {
 			System.out.println(name);
 		}
 

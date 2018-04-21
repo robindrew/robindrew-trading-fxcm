@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.rest;
+package com.robindrew.trading.fxcm.platform.fix;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -20,31 +20,31 @@ import com.robindrew.common.util.Java;
 import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
-import com.robindrew.trading.fxcm.platform.rest.closeposition.ClosePositionCommand;
-import com.robindrew.trading.fxcm.platform.rest.getaccounts.FxcmTradingAccount;
-import com.robindrew.trading.fxcm.platform.rest.getaccounts.GetAccountsCommand;
-import com.robindrew.trading.fxcm.platform.rest.getopenpositions.FxcmPosition;
-import com.robindrew.trading.fxcm.platform.rest.getopenpositions.GetOpenPositionsCommand;
-import com.robindrew.trading.fxcm.platform.rest.login.LoginCommand;
-import com.robindrew.trading.fxcm.platform.rest.logout.LogoutCommand;
-import com.robindrew.trading.fxcm.platform.rest.openposition.OpenPositionCommand;
-import com.robindrew.trading.fxcm.platform.rest.tradingsessionstatus.TradingSessionStatusCommand;
+import com.robindrew.trading.fxcm.platform.fix.closeposition.ClosePositionCommand;
+import com.robindrew.trading.fxcm.platform.fix.getaccounts.FxcmTradingAccount;
+import com.robindrew.trading.fxcm.platform.fix.getaccounts.GetAccountsCommand;
+import com.robindrew.trading.fxcm.platform.fix.getopenpositions.FxcmPosition;
+import com.robindrew.trading.fxcm.platform.fix.getopenpositions.GetOpenPositionsCommand;
+import com.robindrew.trading.fxcm.platform.fix.login.LoginCommand;
+import com.robindrew.trading.fxcm.platform.fix.logout.LogoutCommand;
+import com.robindrew.trading.fxcm.platform.fix.openposition.OpenPositionCommand;
+import com.robindrew.trading.fxcm.platform.fix.tradingsessionstatus.TradingSessionStatusCommand;
 import com.robindrew.trading.log.ITransactionLog;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
 import com.robindrew.trading.position.order.IPositionOrder;
 
-public class FxcmRestService implements IFxcmRestService {
+public class FxcmFixService implements IFxcmRestService {
 
-	private static final Logger log = LoggerFactory.getLogger(FxcmRestService.class);
+	private static final Logger log = LoggerFactory.getLogger(FxcmFixService.class);
 
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
 	private final FxcmStreamingService streaming = new FxcmStreamingService();
 	private final ITransactionLog transactions;
 
-	public FxcmRestService(IFxcmSession session, ITransactionLog transactions) {
+	public FxcmFixService(IFxcmSession session, ITransactionLog transactions) {
 		this.session = Check.notNull("session", session);
 		this.transactions = Check.notNull("transactions", transactions);
 		this.gateway = new FxcmGateway(transactions);
