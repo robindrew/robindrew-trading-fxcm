@@ -17,7 +17,6 @@ import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
-import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.fix.closeposition.ClosePositionCommand;
@@ -30,7 +29,6 @@ import com.robindrew.trading.fxcm.platform.fix.logout.LogoutCommand;
 import com.robindrew.trading.fxcm.platform.fix.openposition.OpenPositionCommand;
 import com.robindrew.trading.fxcm.platform.fix.tradingsessionstatus.TradingSessionStatusCommand;
 import com.robindrew.trading.log.ITransactionLog;
-import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
 import com.robindrew.trading.position.order.IPositionOrder;
@@ -192,19 +190,16 @@ public class FxcmFixService implements IFxcmRestService {
 		}
 	}
 
-	public class FxcmStreamingService extends StreamingService {
+	public class FxcmStreamingService extends StreamingService<FxcmInstrument> {
 
 		@Override
-		public void register(IInstrumentPriceStream stream) {
-			super.registerStream(stream);
-
-			// Subscribe
-			FxcmInstrument instrument = (FxcmInstrument) stream.getInstrument();
-			subscribe(instrument);
+		public boolean subscribe(FxcmInstrument instrument) {
+			return FxcmFixService.this.subscribe(instrument);
 		}
 
 		@Override
-		public void unregister(IInstrument instrument) {
+		public boolean unsubscribe(FxcmInstrument instrument) {
+			return false;
 		}
 
 		@Override
