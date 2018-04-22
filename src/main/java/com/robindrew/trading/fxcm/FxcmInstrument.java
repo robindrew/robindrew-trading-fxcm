@@ -33,7 +33,7 @@ import com.robindrew.trading.Instruments;
 import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
 
-public class FxcmInstrument extends Instrument {
+public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 
 	/** AUD/USD. */
 	public static final FxcmInstrument SPOT_AUD_USD = new FxcmInstrument("AUD/USD", AUD_USD, 6);

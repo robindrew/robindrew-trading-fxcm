@@ -17,8 +17,8 @@ import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
-import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.fxcm.FxcmInstrument;
+import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.fix.closeposition.ClosePositionCommand;
 import com.robindrew.trading.fxcm.platform.fix.getaccounts.FxcmTradingAccount;
@@ -30,8 +30,6 @@ import com.robindrew.trading.fxcm.platform.fix.logout.LogoutCommand;
 import com.robindrew.trading.fxcm.platform.fix.openposition.OpenPositionCommand;
 import com.robindrew.trading.fxcm.platform.fix.tradingsessionstatus.TradingSessionStatusCommand;
 import com.robindrew.trading.log.ITransactionLog;
-import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
-import com.robindrew.trading.platform.streaming.IStreamingService;
 import com.robindrew.trading.platform.streaming.StreamingService;
 import com.robindrew.trading.position.order.IPositionOrder;
 
@@ -41,8 +39,8 @@ public class FxcmFixService implements IFxcmRestService {
 
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
-	private final FxcmStreamingService streaming = new FxcmStreamingService();
 	private final ITransactionLog transactions;
+	private final FxcmStreamingService streaming = new FxcmStreamingService();
 
 	public FxcmFixService(IFxcmSession session, ITransactionLog transactions) {
 		this.session = Check.notNull("session", session);
@@ -55,7 +53,7 @@ public class FxcmFixService implements IFxcmRestService {
 	}
 
 	@Override
-	public IStreamingService getStreamingService() {
+	public FxcmStreamingService getStreamingService() {
 		return streaming;
 	}
 
@@ -145,7 +143,28 @@ public class FxcmFixService implements IFxcmRestService {
 	}
 
 	@Override
-	public boolean subscribe(FxcmInstrument instrument) {
+	public boolean unsubscribe(IFxcmInstrument instrument) {
+		try {
+
+			MarketDataRequest request = new MarketDataRequest();
+			request.addRelatedSymbol(getInstrument(instrument));
+			request.setSubscriptionRequestType(SubscriptionRequestTypeFactory.UNSUBSCRIBE);
+			request.setMDEntryTypeSet(MarketDataRequest.MDENTRYTYPESET_ALL);
+
+			// Send the request
+			String requestId = gateway.getGateway().sendMessage(request);
+
+			// Wait for the response
+			MarketDataSnapshot snapshot = gateway.getResponseCache().getAndClose(requestId);
+			return instrument.getSymbol().equals(snapshot.getInstrument().getSymbol());
+
+		} catch (Exception e) {
+			throw Java.propagate(e);
+		}
+	}
+
+	@Override
+	public boolean subscribe(IFxcmInstrument instrument) {
 		try {
 
 			MarketDataRequest request = new MarketDataRequest();
@@ -163,7 +182,6 @@ public class FxcmFixService implements IFxcmRestService {
 		} catch (Exception e) {
 			throw Java.propagate(e);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -172,7 +190,7 @@ public class FxcmFixService implements IFxcmRestService {
 		return Collections.list(securities);
 	}
 
-	private Instrument getInstrument(FxcmInstrument instrument) {
+	private Instrument getInstrument(IFxcmInstrument instrument) {
 		try {
 
 			TradingSessionStatus status = getTradingSessionStatus();
@@ -192,19 +210,16 @@ public class FxcmFixService implements IFxcmRestService {
 		}
 	}
 
-	public class FxcmStreamingService extends StreamingService {
+	public class FxcmStreamingService extends StreamingService<IFxcmInstrument> {
 
 		@Override
-		public void register(IInstrumentPriceStream stream) {
-			super.registerStream(stream);
-
-			// Subscribe
-			FxcmInstrument instrument = (FxcmInstrument) stream.getInstrument();
-			subscribe(instrument);
+		public boolean subscribe(IFxcmInstrument instrument) {
+			return FxcmFixService.this.subscribe(instrument);
 		}
 
 		@Override
-		public void unregister(IInstrument instrument) {
+		public boolean unsubscribe(IFxcmInstrument instrument) {
+			return FxcmFixService.this.unsubscribe(instrument);
 		}
 
 		@Override

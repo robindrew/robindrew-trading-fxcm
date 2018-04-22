@@ -1,8 +1,8 @@
 package com.robindrew.trading.fxcm.platform.fix;
 
 import com.fxcm.fix.pretrade.TradingSessionStatus;
-import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.platform.streaming.IStreamingService;
+import com.robindrew.trading.fxcm.IFxcmInstrument;
+import com.robindrew.trading.fxcm.platform.fix.FxcmFixService.FxcmStreamingService;
 
 public interface IFxcmRestService {
 
@@ -10,9 +10,11 @@ public interface IFxcmRestService {
 
 	void logout();
 
-	boolean subscribe(FxcmInstrument instrument);
+	boolean subscribe(IFxcmInstrument instrument);
+
+	boolean unsubscribe(IFxcmInstrument instrument);
 
 	TradingSessionStatus getTradingSessionStatus();
 
-	IStreamingService getStreamingService();
+	FxcmStreamingService getStreamingService();
 }
