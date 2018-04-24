@@ -47,6 +47,9 @@ public class FxcmFix {
 		long openTime = snapshot.getOpenTimestamp().getTime();
 		long closeTime = snapshot.getCloseTimestamp().getTime();
 
+		// Tick Volume
+		long tickVolume = snapshot.getTickVolume();
+
 		// Is this a tick?
 		if (openTime == closeTime) {
 			if ((bidOpenPrice == bidClosePrice) && (bidHighPrice == bidLowPrice)) {
@@ -57,7 +60,7 @@ public class FxcmFix {
 		}
 
 		// Nope, just a big fat candle!
-		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces);
+		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces, tickVolume);
 	}
 
 	public static FxcmInstrument toFxcmInstrument(Instrument instrument) {

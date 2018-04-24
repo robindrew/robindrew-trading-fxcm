@@ -52,7 +52,10 @@ public class FxcmCandleLineParser extends FxcmLineParser implements IPriceCandle
 		int askLow = toBigInt(tokenizer.next(false), decimalPlaces);
 		int askClose = toBigInt(tokenizer.next(false), decimalPlaces);
 
-		return new PriceCandle(bidOpen, bidHigh, bidLow, bidClose, askOpen, askHigh, askLow, askClose, openTime, closeTime, decimalPlaces);
+		// Tick Volume (not available)
+		long tickVolume = 0;
+
+		return new PriceCandle(bidOpen, bidHigh, bidLow, bidClose, askOpen, askHigh, askLow, askClose, openTime, closeTime, decimalPlaces, tickVolume);
 	}
 
 }
