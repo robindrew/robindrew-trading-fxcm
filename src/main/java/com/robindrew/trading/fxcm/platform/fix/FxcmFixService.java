@@ -210,7 +210,7 @@ public class FxcmFixService implements IFxcmRestService {
 		}
 	}
 
-	public class FxcmStreamingService extends StreamingService<IFxcmInstrument> {
+	public class FxcmStreamingService extends StreamingService<IFxcmInstrument> implements IFxcmStreamingService {
 
 		@Override
 		public boolean subscribe(IFxcmInstrument instrument) {
@@ -221,16 +221,5 @@ public class FxcmFixService implements IFxcmRestService {
 		public boolean unsubscribe(IFxcmInstrument instrument) {
 			return FxcmFixService.this.unsubscribe(instrument);
 		}
-
-		@Override
-		public void connect() {
-			// Nothing to do
-		}
-
-		@Override
-		public boolean isConnected() {
-			return true;
-		}
-
 	}
 }
