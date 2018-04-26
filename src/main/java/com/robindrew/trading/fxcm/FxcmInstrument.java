@@ -6,7 +6,7 @@ import static com.robindrew.trading.Instruments.AUD_JPY;
 import static com.robindrew.trading.Instruments.AUD_NZD;
 import static com.robindrew.trading.Instruments.AUD_USD;
 import static com.robindrew.trading.Instruments.CAD_CHF;
-import static com.robindrew.trading.Instruments.DOW_JONES;
+import static com.robindrew.trading.Instruments.DOW_JONES_30;
 import static com.robindrew.trading.Instruments.EUR_AUD;
 import static com.robindrew.trading.Instruments.EUR_CHF;
 import static com.robindrew.trading.Instruments.EUR_GBP;
@@ -88,7 +88,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument SPOT_SILVER = new FxcmInstrument("XAG/USD", Instruments.GOLD, 3);
 
 	/** US30. */
-	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES, 2);
+	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES_30, 2);
 	/** UK100. */
 	public static final FxcmInstrument SPOT_FTSE_100 = new FxcmInstrument("UK100", FTSE_100, 2);
 
