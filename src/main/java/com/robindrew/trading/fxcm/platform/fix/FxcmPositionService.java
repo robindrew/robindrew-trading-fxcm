@@ -9,7 +9,6 @@ import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.position.closed.IClosedPosition;
 import com.robindrew.trading.position.order.IPositionOrder;
 import com.robindrew.trading.price.precision.IPricePrecision;
-import com.robindrew.trading.trade.funds.AccountFunds;
 
 public class FxcmPositionService extends PositionService {
 
@@ -31,11 +30,6 @@ public class FxcmPositionService extends PositionService {
 
 	@Override
 	public IClosedPosition closePosition(IPosition position) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public AccountFunds getAvailableFunds() {
 		throw new UnsupportedOperationException();
 	}
 

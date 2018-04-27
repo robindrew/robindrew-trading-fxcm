@@ -6,9 +6,8 @@ import java.math.BigDecimal;
 
 import com.fxcm.fix.posttrade.CollateralReport;
 import com.robindrew.common.text.Strings;
-import com.robindrew.trading.account.ITradingAccount;
 
-public class FxcmTradingAccount implements ITradingAccount {
+public class FxcmTradingAccount {
 
 	private final String id;
 	private final BigDecimal balance;
@@ -18,12 +17,10 @@ public class FxcmTradingAccount implements ITradingAccount {
 		this.balance = toBigDecimal(report.getEndCash());
 	}
 
-	@Override
 	public String getId() {
 		return id;
 	}
 
-	@Override
 	public BigDecimal getBalance() {
 		return balance;
 	}
