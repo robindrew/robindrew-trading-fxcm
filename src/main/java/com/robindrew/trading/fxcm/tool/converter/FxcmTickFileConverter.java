@@ -15,8 +15,8 @@ import com.robindrew.common.lang.Args;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.line.FxcmTickLineParser;
 import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
-import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
+import com.robindrew.trading.price.candle.format.ptf.source.file.PtfFileManager;
+import com.robindrew.trading.price.candle.format.ptf.source.file.PtfFileStreamSink;
 import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
 import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
 import com.robindrew.trading.price.candle.line.parser.PriceCandleLineFile;
@@ -52,14 +52,14 @@ public class FxcmTickFileConverter {
 		log.info("Converting Instrument: {}", instrument);
 
 		// Output directory
-		File directory = PcfFileManager.getDirectory(FXCM, instrument, outputDir);
+		File directory = PtfFileManager.getDirectory(FXCM, instrument, outputDir);
 		if (directory.exists()) {
 			log.info("Output directory already exists, skipping: {}", directory);
 			return;
 		}
 		directory.mkdirs();
 
-		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PcfFileStreamSink(directory))) {
+		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PtfFileStreamSink(directory))) {
 
 			// List and sort the files
 			List<File> files = Files.listFiles(inputDir, false);

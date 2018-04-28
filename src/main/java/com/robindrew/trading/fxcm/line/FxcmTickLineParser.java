@@ -1,10 +1,12 @@
 package com.robindrew.trading.fxcm.line;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.google.common.base.Charsets;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.price.candle.IPriceCandle;
@@ -25,6 +27,10 @@ public class FxcmTickLineParser extends FxcmLineParser implements IPriceCandleLi
 
 	public FxcmTickLineParser(FxcmInstrument instrument) {
 		this(instrument.getPricePrecision());
+	}
+
+	public Charset getCharset() {
+		return Charsets.UTF_16LE;
 	}
 
 	@Override

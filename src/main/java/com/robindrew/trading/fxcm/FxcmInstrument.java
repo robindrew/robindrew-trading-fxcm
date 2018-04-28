@@ -27,6 +27,13 @@ import static com.robindrew.trading.Instruments.USD_CHF;
 import static com.robindrew.trading.Instruments.USD_JPY;
 import static com.robindrew.trading.Instruments.US_CRUDE_OIL;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import com.robindrew.common.lang.reflect.field.FieldLister;
+import com.robindrew.common.lang.reflect.field.IField;
+import com.robindrew.common.lang.reflect.field.IFieldLister;
+import com.robindrew.common.util.Check;
 import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.Instrument;
 import com.robindrew.trading.Instruments;
@@ -95,67 +102,31 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** US CRUDE. */
 	public static final FxcmInstrument SPOT_US_CRUDE = new FxcmInstrument("USOil", US_CRUDE_OIL, 4);
 
-	public static FxcmInstrument valueOf(String name) {
-		switch (name) {
-			case "AUD/USD":
-				return SPOT_AUD_USD;
-			case "AUD/CAD":
-				return SPOT_AUD_CAD;
-			case "AUD/CHF":
-				return SPOT_AUD_CHF;
-			case "AUD/JPY":
-				return SPOT_AUD_JPY;
-			case "AUD/NZD":
-				return SPOT_AUD_NZD;
-			case "CAD/CHF":
-				return SPOT_CAD_CHF;
-			case "EUR/AUD":
-				return SPOT_EUR_AUD;
-			case "EUR/CHF":
-				return SPOT_EUR_CHF;
-			case "EUR/GBP":
-				return SPOT_EUR_GBP;
-			case "EUR/JPY":
-				return SPOT_EUR_JPY;
-			case "EUR/USD":
-				return SPOT_EUR_USD;
-			case "GBP/CAD":
-				return SPOT_GBP_CAD;
-			case "GBP/CHF":
-				return SPOT_GBP_CHF;
-			case "GBP/JPY":
-				return SPOT_GBP_JPY;
-			case "GBP/NZD":
-				return SPOT_GBP_NZD;
-			case "GBP/USD":
-				return SPOT_GBP_USD;
-			case "NZD/CAD":
-				return SPOT_NZD_CAD;
-			case "NZD/CHF":
-				return SPOT_NZD_CHF;
-			case "NZD/JPY":
-				return SPOT_NZD_JPY;
-			case "NZD/USD":
-				return SPOT_NZD_USD;
-			case "USD/CAD":
-				return SPOT_USD_CAD;
-			case "USD/CHF":
-				return SPOT_USD_CHF;
-			case "USD/JPY":
-				return SPOT_USD_JPY;
-			case "XAU/USD":
-				return SPOT_GOLD;
-			case "XAG/USD":
-				return SPOT_SILVER;
-			case "UK100":
-				return SPOT_FTSE_100;
-			case "US30":
-				return SPOT_DOW_JONES;
-			case "USOil":
-				return SPOT_US_CRUDE;
-			default:
-				throw new IllegalArgumentException("Unknown instrument: '" + name + "'");
+	private static final Map<String, FxcmInstrument> cache = populateCache();
+
+	private static Map<String, FxcmInstrument> populateCache() {
+		Map<String, FxcmInstrument> map = new LinkedHashMap<>();
+
+		IFieldLister lister = new FieldLister().includeStatic(true).includeFinal(true).setAccessible(true);
+		for (IField field : lister.getFieldList(FxcmInstrument.class)) {
+			if (field.isType(FxcmInstrument.class)) {
+				FxcmInstrument instrument = field.get(null);
+				map.put(field.getName(), instrument);
+				map.put(instrument.getName(), instrument);
+				map.put(instrument.getSymbol(), instrument);
+				map.put(instrument.getUnderlying(true).getName(), instrument);
+			}
 		}
+		return map;
+	}
+
+	public static FxcmInstrument valueOf(String name) {
+		Check.notEmpty("name", name);
+		FxcmInstrument instrument = cache.get(name);
+		if (instrument == null) {
+			throw new IllegalArgumentException("Unknown instrument: '" + name + "'");
+		}
+		return instrument;
 	}
 
 	private final IPricePrecision precision;
