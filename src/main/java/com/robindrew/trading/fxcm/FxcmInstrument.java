@@ -39,6 +39,8 @@ import com.robindrew.trading.Instrument;
 import com.robindrew.trading.Instruments;
 import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
+import com.robindrew.trading.provider.ITradeDataProvider;
+import com.robindrew.trading.provider.TradeDataProvider;
 
 public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 
@@ -142,6 +144,11 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 
 	public IPricePrecision getPricePrecision() {
 		return precision;
+	}
+
+	@Override
+	public ITradeDataProvider getProvider() {
+		return TradeDataProvider.FXCM;
 	}
 
 }
