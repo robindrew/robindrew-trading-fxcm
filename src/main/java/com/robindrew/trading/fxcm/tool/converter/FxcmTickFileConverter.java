@@ -1,6 +1,6 @@
 package com.robindrew.trading.fxcm.tool.converter;
 
-import static com.robindrew.trading.provider.TradeDataProvider.FXCM;
+import static com.robindrew.trading.provider.TradingProvider.FXCM;
 
 import java.io.File;
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class FxcmTickFileConverter {
 		log.info("Converting Instrument: {}", instrument);
 
 		// Output directory
-		File directory = PtfFileManager.getDirectory(FXCM, instrument, outputDir);
+		File directory = PtfFileManager.getDirectory(outputDir, FXCM, instrument);
 		if (directory.exists()) {
 			log.info("Output directory already exists, skipping: {}", directory);
 			return;

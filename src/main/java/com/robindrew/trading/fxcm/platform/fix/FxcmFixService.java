@@ -1,5 +1,7 @@
 package com.robindrew.trading.fxcm.platform.fix;
 
+import static com.robindrew.trading.provider.TradingProvider.FXCM;
+
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -30,7 +32,7 @@ import com.robindrew.trading.fxcm.platform.fix.logout.LogoutCommand;
 import com.robindrew.trading.fxcm.platform.fix.openposition.OpenPositionCommand;
 import com.robindrew.trading.fxcm.platform.fix.tradingsessionstatus.TradingSessionStatusCommand;
 import com.robindrew.trading.log.ITransactionLog;
-import com.robindrew.trading.platform.streaming.StreamingService;
+import com.robindrew.trading.platform.streaming.AbstractStreamingService;
 import com.robindrew.trading.position.order.IPositionOrder;
 
 public class FxcmFixService implements IFxcmRestService {
@@ -210,7 +212,11 @@ public class FxcmFixService implements IFxcmRestService {
 		}
 	}
 
-	public class FxcmStreamingService extends StreamingService<IFxcmInstrument> implements IFxcmStreamingService {
+	public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrument> implements IFxcmStreamingService {
+
+		public FxcmStreamingService() {
+			super(FXCM);
+		}
 
 		@Override
 		public boolean subscribe(IFxcmInstrument instrument) {

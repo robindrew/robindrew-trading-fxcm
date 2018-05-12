@@ -1,6 +1,6 @@
 package com.robindrew.trading.fxcm.tool.converter;
 
-import static com.robindrew.trading.provider.TradeDataProvider.FXCM;
+import static com.robindrew.trading.provider.TradingProvider.FXCM;
 
 import java.io.File;
 import java.util.Collections;
@@ -53,7 +53,7 @@ public class FxcmM1FileConverter {
 		log.info("Converting Instrument: {}", instrument);
 
 		// Output directory
-		File directory = PcfFileManager.getDirectory(FXCM, instrument, outputDir);
+		File directory = PcfFileManager.getDirectory(outputDir, FXCM, instrument);
 		directory.mkdirs();
 
 		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PcfFileStreamSink(directory))) {
