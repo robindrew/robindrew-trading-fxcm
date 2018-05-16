@@ -31,6 +31,7 @@ public class FxcmGateway {
 	private final ResponseListener responseListener;
 	private final StatusListener statusListener;
 	private final ITransactionLog transactions;
+	private volatile CollateralReport latestCollateralReport = null;
 
 	private volatile String defaultAccount;
 
@@ -117,6 +118,8 @@ public class FxcmGateway {
 			// How should we handle published Collateral Reports?
 			// These occur after opening or closing a position (possibly other actions too)
 			if (response instanceof CollateralReport) {
+				// TODO: Handling reports 
+				latestCollateralReport = (CollateralReport) response;
 			}
 
 			// Log unhandled messages so we can review them
