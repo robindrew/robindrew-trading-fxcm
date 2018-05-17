@@ -1,6 +1,6 @@
-package com.robindrew.trading.fxcm.platform.fix.getaccounts;
+package com.robindrew.trading.fxcm.platform.api.java.getaccounts;
 
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toBigDecimal;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toBigDecimal;
 
 import java.math.BigDecimal;
 

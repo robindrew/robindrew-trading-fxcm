@@ -1,9 +1,9 @@
-package com.robindrew.trading.fxcm.platform.fix.getopenpositions;
+package com.robindrew.trading.fxcm.platform.api.java.getopenpositions;
 
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toBigDecimal;
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toDirection;
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toFxcmInstrument;
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toLocalDateTime;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toBigDecimal;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toDirection;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toFxcmInstrument;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toLocalDateTime;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

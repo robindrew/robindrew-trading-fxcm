@@ -1,7 +1,7 @@
-package com.robindrew.trading.fxcm.platform.fix.logout;
+package com.robindrew.trading.fxcm.platform.api.java.logout;
 
-import com.robindrew.trading.fxcm.platform.fix.FxcmGateway;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGatewayCommand;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGateway;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGatewayCommand;
 
 public class LogoutCommand extends FxcmGatewayCommand<Boolean> {
 

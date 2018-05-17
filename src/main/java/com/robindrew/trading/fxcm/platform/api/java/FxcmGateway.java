@@ -1,7 +1,7 @@
-package com.robindrew.trading.fxcm.platform.fix;
+package com.robindrew.trading.fxcm.platform.api.java;
 
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toFxcmInstrument;
-import static com.robindrew.trading.fxcm.platform.fix.FxcmFix.toPriceCandle;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toFxcmInstrument;
+import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toPriceCandle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +17,8 @@ import com.fxcm.messaging.ITransportable;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.fxcm.platform.fix.getaccounts.FxcmTradingAccount;
-import com.robindrew.trading.fxcm.platform.fix.response.GatewayResponseCache;
+import com.robindrew.trading.fxcm.platform.api.java.getaccounts.FxcmTradingAccount;
+import com.robindrew.trading.fxcm.platform.api.java.response.GatewayResponseCache;
 import com.robindrew.trading.log.ITransactionLog;
 import com.robindrew.trading.price.candle.IPriceCandle;
 

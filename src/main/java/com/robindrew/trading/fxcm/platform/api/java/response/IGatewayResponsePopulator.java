@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix.response;
+package com.robindrew.trading.fxcm.platform.api.java.response;
 
 import java.util.List;
 

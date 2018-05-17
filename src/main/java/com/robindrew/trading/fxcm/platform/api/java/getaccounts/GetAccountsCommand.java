@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix.getaccounts;
+package com.robindrew.trading.fxcm.platform.api.java.getaccounts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.fxcm.fix.posttrade.CollateralInquiry;
 import com.fxcm.fix.posttrade.CollateralReport;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGateway;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGatewayCommand;
-import com.robindrew.trading.fxcm.platform.fix.response.GatewayResponseCache.GatewayResponse;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGateway;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGatewayCommand;
+import com.robindrew.trading.fxcm.platform.api.java.response.GatewayResponseCache.GatewayResponse;
 
 public class GetAccountsCommand extends FxcmGatewayCommand<List<FxcmTradingAccount>> {
 

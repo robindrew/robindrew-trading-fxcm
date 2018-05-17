@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix;
+package com.robindrew.trading.fxcm.platform.api.java;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

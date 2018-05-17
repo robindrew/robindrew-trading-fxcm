@@ -1,12 +1,12 @@
-package com.robindrew.trading.fxcm.platform.fix.login;
+package com.robindrew.trading.fxcm.platform.api.java.login;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fxcm.external.api.transport.FXCMLoginProperties;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGateway;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGatewayCommand;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGateway;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGatewayCommand;
 
 public class LoginCommand extends FxcmGatewayCommand<Boolean> {
 

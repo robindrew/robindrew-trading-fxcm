@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix.getopenpositions;
+package com.robindrew.trading.fxcm.platform.api.java.getopenpositions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import com.fxcm.fix.posttrade.PositionReport;
 import com.fxcm.fix.posttrade.RequestForPositionsAck;
 import com.fxcm.messaging.ITransportable;
 import com.google.common.collect.ImmutableList;
-import com.robindrew.trading.fxcm.platform.fix.response.IGatewayResponsePopulator;
+import com.robindrew.trading.fxcm.platform.api.java.response.IGatewayResponsePopulator;
 
 public class GetOpenPositionsResponse implements IGatewayResponsePopulator {
 

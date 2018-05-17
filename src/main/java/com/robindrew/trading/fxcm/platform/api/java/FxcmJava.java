@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix;
+package com.robindrew.trading.fxcm.platform.api.java;
 
 import static com.robindrew.trading.price.decimal.Decimals.toInt;
 import static com.robindrew.trading.trade.TradeDirection.BUY;
@@ -21,7 +21,7 @@ import com.robindrew.trading.price.candle.PriceCandle;
 import com.robindrew.trading.price.candle.TickPriceCandle;
 import com.robindrew.trading.trade.TradeDirection;
 
-public class FxcmFix {
+public class FxcmJava {
 
 	public static IPriceCandle toPriceCandle(MarketDataSnapshot snapshot) throws Exception {
 

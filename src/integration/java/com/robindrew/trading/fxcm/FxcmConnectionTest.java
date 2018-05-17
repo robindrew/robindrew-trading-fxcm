@@ -13,8 +13,8 @@ import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
 import com.robindrew.trading.fxcm.platform.FxcmSession;
-import com.robindrew.trading.fxcm.platform.fix.FxcmFixService;
-import com.robindrew.trading.fxcm.platform.fix.getopenpositions.FxcmPosition;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
+import com.robindrew.trading.fxcm.platform.api.java.getopenpositions.FxcmPosition;
 import com.robindrew.trading.log.TransactionLog;
 import com.robindrew.trading.position.order.IPositionOrder;
 import com.robindrew.trading.position.order.PositionOrder;
@@ -34,7 +34,7 @@ public class FxcmConnectionTest {
 		TransactionLog transactionLog = new TransactionLog(new File("c:/temp/"));
 		transactionLog.start();
 
-		FxcmFixService fix = new FxcmFixService(session, transactionLog);
+		FxcmJavaService fix = new FxcmJavaService(session, transactionLog);
 		fix.login();
 		fix.getAccounts();
 		for (String name : fix.getInstrumentNames()) {

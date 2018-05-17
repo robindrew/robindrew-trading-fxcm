@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix.getopenpositions;
+package com.robindrew.trading.fxcm.platform.api.java.getopenpositions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fxcm.fix.posttrade.PositionReport;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGateway;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGatewayCommand;
-import com.robindrew.trading.fxcm.platform.fix.response.GatewayResponseCache.GatewayResponse;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGateway;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGatewayCommand;
+import com.robindrew.trading.fxcm.platform.api.java.response.GatewayResponseCache.GatewayResponse;
 
 public class GetOpenPositionsCommand extends FxcmGatewayCommand<List<FxcmPosition>> {
 

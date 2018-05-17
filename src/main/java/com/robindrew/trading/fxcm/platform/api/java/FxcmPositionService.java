@@ -1,4 +1,4 @@
-package com.robindrew.trading.fxcm.platform.fix;
+package com.robindrew.trading.fxcm.platform.api.java;
 
 import static com.robindrew.trading.provider.TradingProvider.FXCM;
 
@@ -10,16 +10,16 @@ import com.robindrew.trading.position.IPosition;
 
 public class FxcmPositionService extends AbstractPositionService {
 
-	private final FxcmFixService fix;
+	private final FxcmJavaService java;
 
-	public FxcmPositionService(FxcmFixService fix) {
+	public FxcmPositionService(FxcmJavaService java) {
 		super(FXCM);
-		this.fix = Check.notNull("fix", fix);
+		this.java = Check.notNull("java", java);
 	}
 
 	@Override
 	public List<? extends IPosition> getAllPositions() {
-		return fix.getPositions();
+		return java.getPositions();
 	}
 
 }

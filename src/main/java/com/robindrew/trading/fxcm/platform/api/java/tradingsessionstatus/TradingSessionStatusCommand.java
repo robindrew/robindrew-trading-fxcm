@@ -1,8 +1,8 @@
-package com.robindrew.trading.fxcm.platform.fix.tradingsessionstatus;
+package com.robindrew.trading.fxcm.platform.api.java.tradingsessionstatus;
 
 import com.fxcm.fix.pretrade.TradingSessionStatus;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGateway;
-import com.robindrew.trading.fxcm.platform.fix.FxcmGatewayCommand;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGateway;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmGatewayCommand;
 
 public class TradingSessionStatusCommand extends FxcmGatewayCommand<TradingSessionStatus> {
 
