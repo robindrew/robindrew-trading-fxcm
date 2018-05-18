@@ -1,7 +1,4 @@
-package com.robindrew.trading.fxcm.platform.api.java;
-
-import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toFxcmInstrument;
-import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toPriceCandle;
+package com.robindrew.trading.fxcm.platform.api.java.gateway;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +13,9 @@ import com.fxcm.messaging.ISessionStatus;
 import com.fxcm.messaging.ITransportable;
 import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Java;
-import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.fxcm.platform.api.java.getaccounts.FxcmTradingAccount;
-import com.robindrew.trading.fxcm.platform.api.java.response.GatewayResponseCache;
+import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
+import com.robindrew.trading.fxcm.platform.api.java.command.response.GatewayResponseCache;
 import com.robindrew.trading.log.ITransactionLog;
-import com.robindrew.trading.price.candle.IPriceCandle;
 
 public class FxcmGateway {
 
@@ -31,20 +26,30 @@ public class FxcmGateway {
 	private final ResponseListener responseListener;
 	private final StatusListener statusListener;
 	private final ITransactionLog transactions;
-	private volatile CollateralReport latestCollateralReport = null;
+	private final MarketDataSnapshotListener snapshotListener;
 
+	private volatile CollateralReport latestCollateralReport = null;
 	private volatile String defaultAccount;
 
 	public FxcmGateway(ITransactionLog transactions) {
+
 		this.gateway = GatewayFactory.createGateway();
 		this.responseCache = new GatewayResponseCache();
 		this.responseListener = new ResponseListener();
 		this.statusListener = new StatusListener();
 		this.transactions = Check.notNull("transactions", transactions);
+		this.snapshotListener = new MarketDataSnapshotListener();
 
 		// Register listeners
 		gateway.registerGenericMessageListener(responseListener);
 		gateway.registerStatusMessageListener(statusListener);
+
+		// Start the snapshot listener
+		snapshotListener.start();
+	}
+
+	public void setTickHandler(IFxcmGatewayTickHandler handler) {
+		snapshotListener.setTickHandler(handler);
 	}
 
 	public IGateway getGateway() {
@@ -97,6 +102,10 @@ public class FxcmGateway {
 		transactions.log(method + "(" + type + ")", message);
 	}
 
+	public CollateralReport getLatestCollateralReport() {
+		return latestCollateralReport;
+	}
+
 	public void handleResponse(ITransportable response) {
 		try {
 			String requestId = response.getRequestID();
@@ -111,14 +120,16 @@ public class FxcmGateway {
 			// Handle published price snapshots (ticking prices)
 			// We do not record these in the transaction log - there are loads!
 			if (response instanceof MarketDataSnapshot) {
-				handleMarketDataSnapshot((MarketDataSnapshot) response);
+				if (snapshotListener != null) {
+					snapshotListener.handleSnapshot((MarketDataSnapshot) response);
+				}
 				return;
 			}
 
 			// How should we handle published Collateral Reports?
 			// These occur after opening or closing a position (possibly other actions too)
 			if (response instanceof CollateralReport) {
-				// TODO: Handling reports 
+				// TODO: Handling reports
 				latestCollateralReport = (CollateralReport) response;
 			}
 
@@ -129,15 +140,6 @@ public class FxcmGateway {
 		} catch (Exception e) {
 			throw Java.propagate(e);
 		}
-	}
-
-	private void handleMarketDataSnapshot(MarketDataSnapshot snapshot) throws Exception {
-		FxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
-		IPriceCandle candle = toPriceCandle(snapshot);
-		handlePriceTick(instrument, candle);
-	}
-
-	private void handlePriceTick(FxcmInstrument instrument, IPriceCandle candle) {
 	}
 
 	public void handleStatus(ISessionStatus status) {

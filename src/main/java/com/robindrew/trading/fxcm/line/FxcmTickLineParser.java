@@ -26,7 +26,7 @@ public class FxcmTickLineParser extends FxcmLineParser implements IPriceCandleLi
 	}
 
 	public FxcmTickLineParser(FxcmInstrument instrument) {
-		this(instrument.getPricePrecision());
+		this(instrument.getPrecision());
 	}
 
 	public Charset getCharset() {

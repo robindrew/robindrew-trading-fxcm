@@ -1,7 +1,5 @@
 package com.robindrew.trading.fxcm.platform.api.java;
 
-import static com.robindrew.trading.provider.TradingProvider.FXCM;
-
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,17 +20,17 @@ import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
-import com.robindrew.trading.fxcm.platform.api.java.closeposition.ClosePositionCommand;
-import com.robindrew.trading.fxcm.platform.api.java.getaccounts.FxcmTradingAccount;
-import com.robindrew.trading.fxcm.platform.api.java.getaccounts.GetAccountsCommand;
-import com.robindrew.trading.fxcm.platform.api.java.getopenpositions.FxcmPosition;
-import com.robindrew.trading.fxcm.platform.api.java.getopenpositions.GetOpenPositionsCommand;
-import com.robindrew.trading.fxcm.platform.api.java.login.LoginCommand;
-import com.robindrew.trading.fxcm.platform.api.java.logout.LogoutCommand;
-import com.robindrew.trading.fxcm.platform.api.java.openposition.OpenPositionCommand;
-import com.robindrew.trading.fxcm.platform.api.java.tradingsessionstatus.TradingSessionStatusCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.closeposition.ClosePositionCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
+import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.GetAccountsCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.getopenpositions.FxcmPosition;
+import com.robindrew.trading.fxcm.platform.api.java.command.getopenpositions.GetOpenPositionsCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.login.LoginCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.logout.LogoutCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.openposition.OpenPositionCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.tradingsessionstatus.TradingSessionStatusCommand;
+import com.robindrew.trading.fxcm.platform.api.java.gateway.FxcmGateway;
 import com.robindrew.trading.log.ITransactionLog;
-import com.robindrew.trading.platform.streaming.AbstractStreamingService;
 import com.robindrew.trading.position.order.IPositionOrder;
 
 public class FxcmJavaService implements IFxcmJavaService {
@@ -42,21 +40,15 @@ public class FxcmJavaService implements IFxcmJavaService {
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
 	private final ITransactionLog transactions;
-	private final FxcmStreamingService streaming = new FxcmStreamingService();
 
-	public FxcmJavaService(IFxcmSession session, ITransactionLog transactions) {
+	public FxcmJavaService(IFxcmSession session, FxcmGateway gateway, ITransactionLog transactions) {
 		this.session = Check.notNull("session", session);
 		this.transactions = Check.notNull("transactions", transactions);
-		this.gateway = new FxcmGateway(transactions);
+		this.gateway = Check.notNull("gateway", gateway);
 	}
 
 	public ITransactionLog getTransactionLog() {
 		return transactions;
-	}
-
-	@Override
-	public FxcmStreamingService getStreamingService() {
-		return streaming;
 	}
 
 	@Override
@@ -167,6 +159,7 @@ public class FxcmJavaService implements IFxcmJavaService {
 
 	@Override
 	public boolean subscribe(IFxcmInstrument instrument) {
+		log.info("[Subscribe] {}", instrument);
 		try {
 
 			MarketDataRequest request = new MarketDataRequest();
@@ -212,20 +205,4 @@ public class FxcmJavaService implements IFxcmJavaService {
 		}
 	}
 
-	public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrument> implements IFxcmStreamingService {
-
-		public FxcmStreamingService() {
-			super(FXCM);
-		}
-
-		@Override
-		public boolean subscribe(IFxcmInstrument instrument) {
-			return FxcmJavaService.this.subscribe(instrument);
-		}
-
-		@Override
-		public boolean unsubscribe(IFxcmInstrument instrument) {
-			return FxcmJavaService.this.unsubscribe(instrument);
-		}
-	}
 }

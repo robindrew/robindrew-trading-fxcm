@@ -25,7 +25,7 @@ public class FxcmCandleLineParser extends FxcmLineParser implements IPriceCandle
 	}
 
 	public FxcmCandleLineParser(FxcmInstrument instrument) {
-		this(instrument.getPricePrecision());
+		this(instrument.getPrecision());
 	}
 
 	@Override

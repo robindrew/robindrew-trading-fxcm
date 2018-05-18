@@ -104,7 +104,7 @@ public class FxcmTickFile {
 		}
 
 		CharTokenizer tokenizer = new CharTokenizer(line, DELIMITERS);
-		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
+		int decimalPlaces = instrument.getPrecision().getDecimalPlaces();
 
 		// Dates
 		LocalDate date = LocalDate.parse(tokenizer.next(false), DATE_FORMAT);

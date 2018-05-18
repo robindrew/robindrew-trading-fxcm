@@ -16,6 +16,7 @@ import com.fxcm.fix.pretrade.MarketDataSnapshot;
 import com.robindrew.common.date.Dates;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
+import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
 import com.robindrew.trading.price.candle.TickPriceCandle;
@@ -26,10 +27,10 @@ public class FxcmJava {
 	public static IPriceCandle toPriceCandle(MarketDataSnapshot snapshot) throws Exception {
 
 		// Instrument
-		FxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
+		IFxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
 
 		// Decimal Places
-		int decimalPlaces = instrument.getPricePrecision().getDecimalPlaces();
+		int decimalPlaces = instrument.getPrecision().getDecimalPlaces();
 
 		// Bid Prices
 		int bidOpenPrice = toInt(snapshot.getBidOpen(), decimalPlaces);
@@ -63,7 +64,7 @@ public class FxcmJava {
 		return new PriceCandle(bidOpenPrice, bidHighPrice, bidLowPrice, bidClosePrice, askOpenPrice, askHighPrice, askLowPrice, askClosePrice, openTime, closeTime, decimalPlaces, tickVolume);
 	}
 
-	public static FxcmInstrument toFxcmInstrument(Instrument instrument) {
+	public static IFxcmInstrument toFxcmInstrument(Instrument instrument) {
 		try {
 			String symbol = instrument.getSymbol();
 			return FxcmInstrument.valueOf(symbol);

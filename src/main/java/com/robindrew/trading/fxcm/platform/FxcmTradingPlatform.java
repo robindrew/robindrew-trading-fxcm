@@ -2,8 +2,8 @@ package com.robindrew.trading.fxcm.platform;
 
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
-import com.robindrew.trading.fxcm.platform.api.java.FxcmPositionService;
-import com.robindrew.trading.fxcm.platform.api.java.IFxcmStreamingService;
+import com.robindrew.trading.fxcm.platform.api.java.position.FxcmPositionService;
+import com.robindrew.trading.fxcm.platform.api.java.streaming.IFxcmStreamingService;
 import com.robindrew.trading.platform.TradingPlatform;
 
 public class FxcmTradingPlatform extends TradingPlatform<IFxcmInstrument> implements IFxcmTradingPlatform {

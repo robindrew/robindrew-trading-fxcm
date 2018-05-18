@@ -138,11 +138,13 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 		this.precision = new PricePrecision(decimalPlaces);
 	}
 
+	@Override
 	public String getSymbol() {
 		return getName();
 	}
 
-	public IPricePrecision getPricePrecision() {
+	@Override
+	public IPricePrecision getPrecision() {
 		return precision;
 	}
 

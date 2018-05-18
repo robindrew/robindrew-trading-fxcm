@@ -1,10 +1,11 @@
-package com.robindrew.trading.fxcm.platform.api.java;
+package com.robindrew.trading.fxcm.platform.api.java.position;
 
 import static com.robindrew.trading.provider.TradingProvider.FXCM;
 
 import java.util.List;
 
 import com.robindrew.common.util.Check;
+import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
 import com.robindrew.trading.platform.positions.AbstractPositionService;
 import com.robindrew.trading.position.IPosition;
 
