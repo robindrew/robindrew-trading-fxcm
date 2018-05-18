@@ -63,7 +63,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** EUR/GBP. */
 	public static final FxcmInstrument SPOT_EUR_GBP = new FxcmInstrument("EUR/GBP", EUR_GBP, 1);
 	/** EUR/JPY. */
-	public static final FxcmInstrument SPOT_EUR_JPY = new FxcmInstrument("EUR/JPY", EUR_JPY, 1);
+	public static final FxcmInstrument SPOT_EUR_JPY = new FxcmInstrument("EUR/JPY", EUR_JPY, 4);
 	/** EUR/USD. */
 	public static final FxcmInstrument SPOT_EUR_USD = new FxcmInstrument("EUR/USD", EUR_USD, 6);
 	/** GBP/CAD. */

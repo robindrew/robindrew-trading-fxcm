@@ -59,17 +59,21 @@ public class MarketDataSnapshotListener extends Thread implements AutoCloseable 
 
 	private void handleSnapshotAsync(MarketDataSnapshot snapshot) throws Exception {
 
-		// Parse the tick
-		IPriceCandle candle = toPriceCandle(snapshot);
-		if (candle instanceof ITickPriceCandle) {
+		// Resolve the instrument
+		IFxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
+		try {
 
-			// Resolve the instrument
-			IFxcmInstrument instrument = toFxcmInstrument(snapshot.getInstrument());
+			// Parse the tick
+			IPriceCandle candle = toPriceCandle(snapshot);
+			if (candle instanceof ITickPriceCandle) {
 
-			// Handle the tick
-			if (tickHandler != null) {
-				tickHandler.handleTick(instrument, (ITickPriceCandle) candle);
+				// Handle the tick
+				if (tickHandler != null) {
+					tickHandler.handleTick(instrument, (ITickPriceCandle) candle);
+				}
 			}
+		} catch (Exception e) {
+			log.warn("Failed to handle snapshot for instrument: " + instrument, e);
 		}
 	}
 

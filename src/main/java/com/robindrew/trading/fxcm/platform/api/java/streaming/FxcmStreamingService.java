@@ -4,13 +4,12 @@ import static com.robindrew.trading.provider.TradingProvider.FXCM;
 
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
-import com.robindrew.trading.fxcm.platform.api.java.gateway.IFxcmGatewayTickHandler;
 import com.robindrew.trading.platform.streaming.AbstractStreamingService;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.InstrumentPriceStream;
 import com.robindrew.trading.price.candle.ITickPriceCandle;
 
-public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrument> implements IFxcmStreamingService, IFxcmGatewayTickHandler {
+public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrument> implements IFxcmStreamingService {
 
 	private final FxcmJavaService service;
 
