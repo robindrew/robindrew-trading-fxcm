@@ -26,6 +26,8 @@ import static com.robindrew.trading.Instruments.USD_CAD;
 import static com.robindrew.trading.Instruments.USD_CHF;
 import static com.robindrew.trading.Instruments.USD_JPY;
 import static com.robindrew.trading.Instruments.US_CRUDE_OIL;
+import static com.robindrew.trading.Instruments.XAG_USD;
+import static com.robindrew.trading.Instruments.XAU_USD;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +38,6 @@ import com.robindrew.common.lang.reflect.field.IFieldLister;
 import com.robindrew.common.util.Check;
 import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.Instrument;
-import com.robindrew.trading.Instruments;
 import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
 import com.robindrew.trading.provider.ITradingProvider;
@@ -92,9 +93,9 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument SPOT_USD_JPY = new FxcmInstrument("USD/JPY", USD_JPY, 4);
 
 	/** XAU/USD. */
-	public static final FxcmInstrument SPOT_GOLD = new FxcmInstrument("XAU/USD", Instruments.GOLD, 3);
-	/** XAU/USD. */
-	public static final FxcmInstrument SPOT_SILVER = new FxcmInstrument("XAG/USD", Instruments.GOLD, 3);
+	public static final FxcmInstrument SPOT_XAU_USD = new FxcmInstrument("XAU/USD", XAU_USD, 4);
+	/** XAG/USD. */
+	public static final FxcmInstrument SPOT_XAG_USD = new FxcmInstrument("XAG/USD", XAG_USD, 4);
 
 	/** US30. */
 	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES_30, 2);

@@ -39,7 +39,7 @@ public class FxcmStreamingTest {
 		FxcmStreamingService streaming = new FxcmStreamingService(service);
 		gateway.setTickHandler(streaming);
 
-		IFxcmInstrument instrument = FxcmInstrument.SPOT_EUR_USD;
+		IFxcmInstrument instrument = FxcmInstrument.SPOT_US_CRUDE;
 		streaming.subscribe(instrument);
 
 		IInstrumentPriceStream<IFxcmInstrument> stream = streaming.getPriceStream(instrument);
