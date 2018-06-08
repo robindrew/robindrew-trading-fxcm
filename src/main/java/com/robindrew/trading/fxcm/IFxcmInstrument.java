@@ -1,8 +1,8 @@
 package com.robindrew.trading.fxcm;
 
-import com.robindrew.trading.provider.ITradeDataProviderInstrument;
+import com.robindrew.trading.provider.ITradingProviderInstrument;
 
-public interface IFxcmInstrument extends ITradeDataProviderInstrument {
+public interface IFxcmInstrument extends ITradingProviderInstrument {
 
 	String getSymbol();
 }
