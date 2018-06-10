@@ -1,0 +1,11 @@
+<release>
+   <groupId>com.robindrew</groupId>
+   <artifactId>robindrew-trading-fxcm</artifactId>
+   <version>3.0</version>
+   <releaseVersions>
+      <releaseVersion>
+         <hash>4e664258b22863805bdc454f5c1641d7</hash>
+         <version>3.0.1</version>
+      </releaseVersion>
+   </releaseVersions>
+</release>
