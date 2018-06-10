@@ -39,16 +39,22 @@ public class FxcmJavaService implements IFxcmJavaService {
 
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
-	private final ITransactionLog transactions;
+	private final ITransactionLog transactionLog;
 
-	public FxcmJavaService(IFxcmSession session, FxcmGateway gateway, ITransactionLog transactions) {
+	public FxcmJavaService(IFxcmSession session, FxcmGateway gateway, ITransactionLog transactionLog) {
 		this.session = Check.notNull("session", session);
-		this.transactions = Check.notNull("transactions", transactions);
+		this.transactionLog = Check.notNull("transactionLog", transactionLog);
 		this.gateway = Check.notNull("gateway", gateway);
 	}
 
+	@Override
+	public IFxcmSession getSession() {
+		return session;
+	}
+
+	@Override
 	public ITransactionLog getTransactionLog() {
-		return transactions;
+		return transactionLog;
 	}
 
 	@Override

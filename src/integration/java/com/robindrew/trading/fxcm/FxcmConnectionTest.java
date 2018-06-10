@@ -16,7 +16,7 @@ import com.robindrew.trading.fxcm.platform.FxcmSession;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
 import com.robindrew.trading.fxcm.platform.api.java.command.getopenpositions.FxcmPosition;
 import com.robindrew.trading.fxcm.platform.api.java.gateway.FxcmGateway;
-import com.robindrew.trading.log.TransactionLog;
+import com.robindrew.trading.log.FileBackedTransactionLog;
 import com.robindrew.trading.position.order.IPositionOrder;
 import com.robindrew.trading.position.order.PositionOrder;
 import com.robindrew.trading.trade.TradeDirection;
@@ -32,8 +32,8 @@ public class FxcmConnectionTest {
 		FxcmCredentials credentials = new FxcmCredentials(username, password);
 		FxcmEnvironment environment = DEMO;
 		FxcmSession session = new FxcmSession(credentials, environment);
-		TransactionLog transactionLog = new TransactionLog(new File("c:/temp/"));
-		transactionLog.start();
+		FileBackedTransactionLog transactionLog = new FileBackedTransactionLog(new File("c:/temp/"));
+		transactionLog.start("FxcmTransactionLog");
 
 		FxcmGateway gateway = new FxcmGateway(transactionLog);
 		FxcmJavaService service = new FxcmJavaService(session, gateway, transactionLog);
