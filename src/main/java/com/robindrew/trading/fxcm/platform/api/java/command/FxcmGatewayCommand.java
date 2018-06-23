@@ -27,6 +27,9 @@ public abstract class FxcmGatewayCommand<R> {
 			return result;
 
 		} catch (Exception e) {
+			if ("Problem getting station descriptor".equals(e.getMessage())) {
+				throw new TradingPlatformException(getName() + " command failed, is FXCM closed for weekend maintenance?", e);
+			}
 			throw new TradingPlatformException(getName() + " command failed", e);
 		}
 	}
