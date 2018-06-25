@@ -83,6 +83,19 @@ public class FxcmJavaService implements IFxcmJavaService {
 		return names;
 	}
 
+	public Set<FxcmInstrument> getInstruments() {
+		Set<FxcmInstrument> instruments = new TreeSet<>();
+		for (String name : getInstrumentNames()) {
+			try {
+				FxcmInstrument instrument = FxcmInstrument.valueOf(name);
+				instruments.add(instrument);
+			} catch (Exception e) {
+				log.warn("Unmapped Instrument: {}", name);
+			}
+		}
+		return instruments;
+	}
+
 	@Override
 	public TradingSessionStatus getTradingSessionStatus() {
 		return new TradingSessionStatusCommand().execute(gateway);

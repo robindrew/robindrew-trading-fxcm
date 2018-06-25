@@ -7,6 +7,8 @@ import java.io.File;
 import java.math.BigDecimal;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.robindrew.common.locale.CurrencyCode;
 import com.robindrew.common.util.Threads;
@@ -22,6 +24,8 @@ import com.robindrew.trading.position.order.PositionOrder;
 import com.robindrew.trading.trade.TradeDirection;
 
 public class FxcmConnectionTest {
+
+	private static final Logger log = LoggerFactory.getLogger(FxcmConnectionTest.class);
 
 	@Test
 	public void connect() throws Exception {
@@ -39,8 +43,8 @@ public class FxcmConnectionTest {
 		FxcmJavaService service = new FxcmJavaService(session, gateway, transactionLog);
 		service.login();
 		service.getAccounts();
-		for (String name : service.getInstrumentNames()) {
-			System.out.println(name);
+		for (FxcmInstrument instrument : service.getInstruments()) {
+			log.info("Instrument: {}", instrument);
 		}
 
 		FxcmInstrument instrument = FxcmInstrument.SPOT_EUR_USD;
