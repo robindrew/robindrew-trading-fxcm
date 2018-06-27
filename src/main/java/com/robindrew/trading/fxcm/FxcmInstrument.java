@@ -201,7 +201,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** SPX500. */
 	public static final FxcmInstrument SPX500 = new FxcmInstrument("SPX500", SP_500, 1);
 	/** UKOil. */
-	public static final FxcmInstrument UKOIL = new FxcmInstrument("UKOil", BRENT_CRUDE_OIL, 1);
+	public static final FxcmInstrument UKOIL = new FxcmInstrument("UKOil", BRENT_CRUDE_OIL, 4);
 	/** USDOLLAR. */
 	public static final FxcmInstrument USDOLLAR = new FxcmInstrument("USDOLLAR", DOW_JONES_30, 1);
 
