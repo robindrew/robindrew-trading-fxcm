@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +41,7 @@ public class FxcmJavaService implements IFxcmJavaService {
 	private final IFxcmSession session;
 	private final FxcmGateway gateway;
 	private final ITransactionLog transactionLog;
+	private final AtomicBoolean loggedIn = new AtomicBoolean(false);
 
 	public FxcmJavaService(IFxcmSession session, FxcmGateway gateway, ITransactionLog transactionLog) {
 		this.session = Check.notNull("session", session);
@@ -60,16 +62,31 @@ public class FxcmJavaService implements IFxcmJavaService {
 	@Override
 	public void login() {
 		new LoginCommand(session).execute(gateway);
+		loggedIn.set(true);
 		getTradingSessionStatus();
 	}
 
 	@Override
 	public void logout() {
 		new LogoutCommand().execute(gateway);
+		loggedIn.set(false);
+	}
+
+	@Override
+	public boolean isLoggedIn() {
+		return loggedIn.get();
+	}
+
+	private void checkLoggedIn() {
+		if (!isLoggedIn()) {
+			throw new IllegalStateException("Not logged in");
+		}
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public Set<String> getInstrumentNames() {
+		checkLoggedIn();
 		TradingSessionStatus status = getTradingSessionStatus();
 		Set<String> names = new TreeSet<>();
 		List<TradingSecurity> securities = Collections.list(status.getSecurities());
@@ -83,7 +100,9 @@ public class FxcmJavaService implements IFxcmJavaService {
 		return names;
 	}
 
+	@Override
 	public Set<FxcmInstrument> getInstruments() {
+		checkLoggedIn();
 		Set<FxcmInstrument> instruments = new TreeSet<>();
 		for (String name : getInstrumentNames()) {
 			try {
@@ -98,26 +117,33 @@ public class FxcmJavaService implements IFxcmJavaService {
 
 	@Override
 	public TradingSessionStatus getTradingSessionStatus() {
+		checkLoggedIn();
 		return new TradingSessionStatusCommand().execute(gateway);
 	}
 
 	public void openPosition(IPositionOrder order) {
+		checkLoggedIn();
 		new OpenPositionCommand(order).execute(gateway);
 	}
 
 	public void closePosition(FxcmPosition position) {
+		checkLoggedIn();
 		new ClosePositionCommand(position).execute(gateway);
 	}
 
+	@Override
 	public List<FxcmTradingAccount> getAccounts() {
+		checkLoggedIn();
 		return new GetAccountsCommand().execute(gateway);
 	}
 
 	public List<FxcmPosition> getPositions() {
+		checkLoggedIn();
 		return new GetOpenPositionsCommand().execute(gateway);
 	}
 
 	public MarketDataSnapshot getMarketDataSnapshot(FxcmInstrument instrument) {
+		checkLoggedIn();
 		try {
 
 			TradingSessionStatus status = getTradingSessionStatus();
@@ -157,6 +183,8 @@ public class FxcmJavaService implements IFxcmJavaService {
 
 	@Override
 	public boolean unsubscribe(IFxcmInstrument instrument) {
+		checkLoggedIn();
+		log.info("[Unsubscribe] {}", instrument);
 		try {
 
 			MarketDataRequest request = new MarketDataRequest();
@@ -178,6 +206,7 @@ public class FxcmJavaService implements IFxcmJavaService {
 
 	@Override
 	public boolean subscribe(IFxcmInstrument instrument) {
+		checkLoggedIn();
 		log.info("[Subscribe] {}", instrument);
 		try {
 
