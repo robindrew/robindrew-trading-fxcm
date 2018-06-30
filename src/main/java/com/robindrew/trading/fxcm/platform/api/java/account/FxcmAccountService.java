@@ -6,7 +6,7 @@ import com.robindrew.trading.fxcm.platform.api.java.IFxcmJavaService;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.provider.ITradingProvider;
 import com.robindrew.trading.provider.TradingProvider;
-import com.robindrew.trading.trade.balance.IMoney;
+import com.robindrew.trading.trade.money.IMoney;
 
 public class FxcmAccountService implements IFxcmAccountService {
 
