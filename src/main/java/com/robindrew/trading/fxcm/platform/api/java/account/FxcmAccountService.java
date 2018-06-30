@@ -6,7 +6,7 @@ import com.robindrew.trading.fxcm.platform.api.java.IFxcmJavaService;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.provider.ITradingProvider;
 import com.robindrew.trading.provider.TradingProvider;
-import com.robindrew.trading.trade.cash.ICash;
+import com.robindrew.trading.trade.balance.IMoney;
 
 public class FxcmAccountService implements IFxcmAccountService {
 
@@ -30,7 +30,7 @@ public class FxcmAccountService implements IFxcmAccountService {
 	}
 
 	@Override
-	public ICash getBalance() {
-		return null;
+	public IMoney getBalance() {
+		throw new UnsupportedOperationException("Not implemented");
 	}
 }
