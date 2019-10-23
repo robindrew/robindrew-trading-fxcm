@@ -1,0 +1,5 @@
+rootProject.name = 'robindrew-trading-fxcm'
+include 'robindrew-common'
+project(":robindrew-common").projectDir = file('/../robindrew-common')
+include 'robindrew-trading'
+project(":robindrew-trading").projectDir = file('/../robindrew-trading')
