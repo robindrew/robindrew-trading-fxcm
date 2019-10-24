@@ -61,6 +61,7 @@ dependencies {
 	compile group: 'org.apache.commons',          name: 'commons-lang3',     version: '3.0'
 	compile group: 'org.apache.httpcomponents'  , name: 'httpclient',        version: '4.5.2'
 	compile group: 'uk.org.lidalia', 			  name: 'sysout-over-slf4j', version: '1.0.2'
+	compile group: 'org.slf4j',                   name: 'log4j-over-slf4j',  version: '1.7.25'
 
 	compile project(":robindrew-common")
 	compile project(":robindrew-trading")
