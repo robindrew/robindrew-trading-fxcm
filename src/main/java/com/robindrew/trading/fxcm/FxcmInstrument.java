@@ -7,6 +7,7 @@ import static com.robindrew.trading.Instruments.AUD_JPY;
 import static com.robindrew.trading.Instruments.AUD_NZD;
 import static com.robindrew.trading.Instruments.AUD_USD;
 import static com.robindrew.trading.Instruments.BRENT_CRUDE_OIL;
+import static com.robindrew.trading.Instruments.BTC_USD;
 import static com.robindrew.trading.Instruments.CAC_40;
 import static com.robindrew.trading.Instruments.CAD_CHF;
 import static com.robindrew.trading.Instruments.CAD_JPY;
@@ -70,6 +71,7 @@ import com.robindrew.common.lang.reflect.field.IFieldLister;
 import com.robindrew.common.util.Check;
 import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.Instrument;
+import com.robindrew.trading.Instruments;
 import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
 import com.robindrew.trading.provider.ITradingProvider;
@@ -84,7 +86,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** AUD/CHF. */
 	public static final FxcmInstrument SPOT_AUD_CHF = new FxcmInstrument("AUD/CHF", AUD_CHF, 1);
 	/** AUD/JPY. */
-	public static final FxcmInstrument SPOT_AUD_JPY = new FxcmInstrument("AUD/JPY", AUD_JPY, 1);
+	public static final FxcmInstrument SPOT_AUD_JPY = new FxcmInstrument("AUD/JPY", AUD_JPY, 3);
 	/** AUD/NZD. */
 	public static final FxcmInstrument SPOT_AUD_NZD = new FxcmInstrument("AUD/NZD", AUD_NZD, 1);
 	/** CAD/CHF. */
@@ -92,9 +94,9 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** EUR/AUD. */
 	public static final FxcmInstrument SPOT_EUR_AUD = new FxcmInstrument("EUR/AUD", EUR_AUD, 1);
 	/** EUR/CHF. */
-	public static final FxcmInstrument SPOT_EUR_CHF = new FxcmInstrument("EUR/CHF", EUR_CHF, 1);
+	public static final FxcmInstrument SPOT_EUR_CHF = new FxcmInstrument("EUR/CHF", EUR_CHF, 5);
 	/** EUR/GBP. */
-	public static final FxcmInstrument SPOT_EUR_GBP = new FxcmInstrument("EUR/GBP", EUR_GBP, 1);
+	public static final FxcmInstrument SPOT_EUR_GBP = new FxcmInstrument("EUR/GBP", EUR_GBP, 5);
 	/** EUR/JPY. */
 	public static final FxcmInstrument SPOT_EUR_JPY = new FxcmInstrument("EUR/JPY", EUR_JPY, 4);
 	/** EUR/USD. */
@@ -158,6 +160,9 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument SPOT_USD_ZAR = new FxcmInstrument("USD/ZAR", USD_ZAR, 1);
 	/** ZAR/JPY. */
 	public static final FxcmInstrument SPOT_ZAR_JPY = new FxcmInstrument("ZAR/JPY", ZAR_JPY, 1);
+	
+	/** BTC USD */
+	public static final FxcmInstrument SPOT_BTC_USD = new FxcmInstrument("BTC/USD", BTC_USD, 1);
 
 	/** XAU/USD. */
 	public static final FxcmInstrument SPOT_XAU_USD = new FxcmInstrument("XAU/USD", XAU_USD, 4);
@@ -193,7 +198,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** JPN225. */
 	public static final FxcmInstrument JPN225 = new FxcmInstrument("JPN225", NIKKEI_225, 1);
 	/** NAS100. */
-	public static final FxcmInstrument NAS100 = new FxcmInstrument("NAS100", NASDAQ_100, 1);
+	public static final FxcmInstrument NAS100 = new FxcmInstrument("NAS100", NASDAQ_100, 2);
 	/** NGAS. */
 	public static final FxcmInstrument NGAS = new FxcmInstrument("NGAS", NATURAL_GAS, 1);
 	/** SOYF. */
@@ -204,7 +209,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument UKOIL = new FxcmInstrument("UKOil", BRENT_CRUDE_OIL, 4);
 	/** USDOLLAR. */
 	public static final FxcmInstrument USDOLLAR = new FxcmInstrument("USDOLLAR", DOW_JONES_30, 1);
-
+	
 	private static final Map<String, FxcmInstrument> cache = populateCache();
 
 	private static Map<String, FxcmInstrument> populateCache() {
