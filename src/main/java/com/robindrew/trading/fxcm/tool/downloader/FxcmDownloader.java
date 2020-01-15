@@ -66,7 +66,7 @@ public abstract class FxcmDownloader {
 	public boolean downloadYear(String instrument, LocalDateTime date) {
 		int count = 0;
 		int year = date.getYear();
-		for (int week = 1; week < 53; week++) {
+		for (int week = 1; week <= 53; week++) {
 
 			File file = getOutputFile(instrument, year, week);
 			if (file.exists()) {
@@ -77,15 +77,21 @@ public abstract class FxcmDownloader {
 			try {
 				if (downloadToFile(instrument, year, week, file)) {
 					count++;
+				} else {
+					if (count > 0) {
+						break;
+					}
 				}
 			} catch (HttpResponseException hre) {
 				int statusCode = hre.getStatusCode();
 				if (statusCode == 404) {
 					log.warn("File Not Found - Skipping download (year=" + year + ", week=" + week + ")");
+					if (count > 0) {
+						break;
+					}
 				} else {
 					log.warn("Failed to download (year=" + year + ", week=" + week + ")", hre);
 				}
-				break;
 			} catch (Exception e) {
 				log.warn("Failed to download year=" + year + ", week=" + week, e);
 				break;
