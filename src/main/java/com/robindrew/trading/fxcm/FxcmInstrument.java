@@ -71,7 +71,6 @@ import com.robindrew.common.lang.reflect.field.IFieldLister;
 import com.robindrew.common.util.Check;
 import com.robindrew.trading.IInstrument;
 import com.robindrew.trading.Instrument;
-import com.robindrew.trading.Instruments;
 import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
 import com.robindrew.trading.provider.ITradingProvider;

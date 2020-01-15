@@ -1,6 +1,7 @@
 package com.robindrew.trading.fxcm.tool.downloader;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.TreeSet;
@@ -58,15 +59,15 @@ public abstract class FxcmDownloader {
 		// Initial date
 		LocalDateTime date = LocalDateTime.now();
 
-		while (downloadYear(instrument, date)) {
-			date = date.minusYears(1);
+		int year = date.getYear();
+		while (downloadYear(instrument, year)) {
+			year--;
 		}
 	}
 
-	public boolean downloadYear(String instrument, LocalDateTime date) {
+	public boolean downloadYear(String instrument, int year) {
 		int count = 0;
-		int year = date.getYear();
-		for (int week = 1; week <= 53; week++) {
+		for (int week = 53; week >= 1; week--) {
 
 			File file = getOutputFile(instrument, year, week);
 			if (file.exists()) {
@@ -78,7 +79,7 @@ public abstract class FxcmDownloader {
 				if (downloadToFile(instrument, year, week, file)) {
 					count++;
 				} else {
-					if (count > 0) {
+					if (count > 2) {
 						break;
 					}
 				}
@@ -86,7 +87,7 @@ public abstract class FxcmDownloader {
 				int statusCode = hre.getStatusCode();
 				if (statusCode == 404) {
 					log.warn("File Not Found - Skipping download (year=" + year + ", week=" + week + ")");
-					if (count > 0) {
+					if (count > 2) {
 						break;
 					}
 				} else {
@@ -96,6 +97,11 @@ public abstract class FxcmDownloader {
 				log.warn("Failed to download year=" + year + ", week=" + week, e);
 				break;
 			}
+		}
+
+		// Always check before this year
+		if (year == LocalDate.now().getYear()) {
+			return true;
 		}
 		return count > 0;
 	}
