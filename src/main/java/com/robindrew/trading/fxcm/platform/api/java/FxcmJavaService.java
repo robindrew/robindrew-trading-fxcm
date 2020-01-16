@@ -72,7 +72,7 @@ public class FxcmJavaService implements IFxcmJavaService {
 			try {
 				String symbol = security.getSymbol();
 				try {
-					FxcmInstrument.valueOf(symbol);
+					instruments.add(FxcmInstrument.valueOf(symbol));
 				} catch (Exception e) {
 					log.warn("[Unsupported Instrument] {}", symbol);
 				}

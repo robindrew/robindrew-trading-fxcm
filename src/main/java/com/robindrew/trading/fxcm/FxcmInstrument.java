@@ -6,6 +6,7 @@ import static com.robindrew.trading.Instruments.AUD_CHF;
 import static com.robindrew.trading.Instruments.AUD_JPY;
 import static com.robindrew.trading.Instruments.AUD_NZD;
 import static com.robindrew.trading.Instruments.AUD_USD;
+import static com.robindrew.trading.Instruments.BCH_USD;
 import static com.robindrew.trading.Instruments.BRENT_CRUDE_OIL;
 import static com.robindrew.trading.Instruments.BTC_USD;
 import static com.robindrew.trading.Instruments.CAC_40;
@@ -14,9 +15,11 @@ import static com.robindrew.trading.Instruments.CAD_JPY;
 import static com.robindrew.trading.Instruments.CHF_JPY;
 import static com.robindrew.trading.Instruments.CHINA_A50;
 import static com.robindrew.trading.Instruments.COPPER;
+import static com.robindrew.trading.Instruments.CORN;
 import static com.robindrew.trading.Instruments.DAX_30;
 import static com.robindrew.trading.Instruments.DE_BUND_10Y;
 import static com.robindrew.trading.Instruments.DOW_JONES_30;
+import static com.robindrew.trading.Instruments.ETH_USD;
 import static com.robindrew.trading.Instruments.EURO_STOXX_50;
 import static com.robindrew.trading.Instruments.EUR_AUD;
 import static com.robindrew.trading.Instruments.EUR_CAD;
@@ -37,6 +40,7 @@ import static com.robindrew.trading.Instruments.GBP_NZD;
 import static com.robindrew.trading.Instruments.GBP_USD;
 import static com.robindrew.trading.Instruments.HANG_SENG_33;
 import static com.robindrew.trading.Instruments.IBEX_35;
+import static com.robindrew.trading.Instruments.LTC_USD;
 import static com.robindrew.trading.Instruments.NASDAQ_100;
 import static com.robindrew.trading.Instruments.NATURAL_GAS;
 import static com.robindrew.trading.Instruments.NIKKEI_225;
@@ -44,6 +48,7 @@ import static com.robindrew.trading.Instruments.NZD_CAD;
 import static com.robindrew.trading.Instruments.NZD_CHF;
 import static com.robindrew.trading.Instruments.NZD_JPY;
 import static com.robindrew.trading.Instruments.NZD_USD;
+import static com.robindrew.trading.Instruments.RUSSELL_2000;
 import static com.robindrew.trading.Instruments.SOYBEANS;
 import static com.robindrew.trading.Instruments.SP_500;
 import static com.robindrew.trading.Instruments.TRY_JPY;
@@ -58,8 +63,10 @@ import static com.robindrew.trading.Instruments.USD_SEK;
 import static com.robindrew.trading.Instruments.USD_TRY;
 import static com.robindrew.trading.Instruments.USD_ZAR;
 import static com.robindrew.trading.Instruments.US_CRUDE_OIL;
+import static com.robindrew.trading.Instruments.WHEAT;
 import static com.robindrew.trading.Instruments.XAG_USD;
 import static com.robindrew.trading.Instruments.XAU_USD;
+import static com.robindrew.trading.Instruments.XRP_USD;
 import static com.robindrew.trading.Instruments.ZAR_JPY;
 
 import java.util.LinkedHashMap;
@@ -160,21 +167,39 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** ZAR/JPY. */
 	public static final FxcmInstrument SPOT_ZAR_JPY = new FxcmInstrument("ZAR/JPY", ZAR_JPY, 1);
 	
-	/** BTC USD */
+	/** BTC/USD */
 	public static final FxcmInstrument SPOT_BTC_USD = new FxcmInstrument("BTC/USD", BTC_USD, 1);
+	/** LTC/USD */
+	public static final FxcmInstrument SPOT_LTC_USD = new FxcmInstrument("LTC/USD", LTC_USD, 1);
+	/** ETH/USD */
+	public static final FxcmInstrument SPOT_ETH_USD = new FxcmInstrument("ETH/USD", ETH_USD, 1);
+	/** BCH/USD */
+	public static final FxcmInstrument SPOT_BCH_USD = new FxcmInstrument("BCH/USD", BCH_USD, 1);
+	/** XRP/USD */
+	public static final FxcmInstrument SPOT_XRP_USD = new FxcmInstrument("XRP/USD", XRP_USD, 1);
 
 	/** XAU/USD. */
 	public static final FxcmInstrument SPOT_XAU_USD = new FxcmInstrument("XAU/USD", XAU_USD, 4);
 	/** XAG/USD. */
 	public static final FxcmInstrument SPOT_XAG_USD = new FxcmInstrument("XAG/USD", XAG_USD, 4);
 
+	/** US CRUDE. */
+	public static final FxcmInstrument SPOT_US_CRUDE = new FxcmInstrument("USOil", US_CRUDE_OIL, 4);
+	/** UK BRENT CRUDE OIL. */
+	public static final FxcmInstrument UKOIL = new FxcmInstrument("UKOil", BRENT_CRUDE_OIL, 4);
+
 	/** US30. */
 	public static final FxcmInstrument SPOT_DOW_JONES = new FxcmInstrument("US30", DOW_JONES_30, 2);
+	/** US2000. */
+	public static final FxcmInstrument SPOT_RUSSEL_2000 = new FxcmInstrument("US2000", RUSSELL_2000, 2);
 	/** UK100. */
 	public static final FxcmInstrument SPOT_FTSE_100 = new FxcmInstrument("UK100", FTSE_100, 2);
 
-	/** US CRUDE. */
-	public static final FxcmInstrument SPOT_US_CRUDE = new FxcmInstrument("USOil", US_CRUDE_OIL, 4);
+	/** USDOLLAR (FXCM US Dollar = USD / AUD+GBP+EUR+JPY). */
+	/** USEquities (FXCM US Equities = ). */
+	/** JPYBasket (FXCM JPY Basket = JPY / AUD+GBP+CAD+EUR+USD). */
+	/** EMBasket (FXCM Emerging Markets = USD / CNY+MXN+TRY+ZAR). */
+	/** CryptoMajor (FXCM Cryptocurrency Benchmark = USD / BTC+BCH+ETH+LTC+XRP). */
 
 	/** AUS200. */
 	public static final FxcmInstrument AUS200 = new FxcmInstrument("AUS200", ASX_200, 1);
@@ -182,8 +207,6 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument BUND = new FxcmInstrument("Bund", DE_BUND_10Y, 1);
 	/** CHN50. */
 	public static final FxcmInstrument CHN50 = new FxcmInstrument("CHN50", CHINA_A50, 1);
-	/** Copper. */
-	public static final FxcmInstrument SPOT_COPPER = new FxcmInstrument("Copper", COPPER, 1);
 	/** ESP35. */
 	public static final FxcmInstrument ESP35 = new FxcmInstrument("ESP35", IBEX_35, 1);
 	/** EUSTX50. */
@@ -198,16 +221,19 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument JPN225 = new FxcmInstrument("JPN225", NIKKEI_225, 1);
 	/** NAS100. */
 	public static final FxcmInstrument NAS100 = new FxcmInstrument("NAS100", NASDAQ_100, 2);
+	/** SPX500. */
+	public static final FxcmInstrument SPX500 = new FxcmInstrument("SPX500", SP_500, 1);
+
+	/** Copper. */
+	public static final FxcmInstrument SPOT_COPPER = new FxcmInstrument("Copper", COPPER, 1);
 	/** NGAS. */
 	public static final FxcmInstrument NGAS = new FxcmInstrument("NGAS", NATURAL_GAS, 1);
 	/** SOYF. */
 	public static final FxcmInstrument SOYF = new FxcmInstrument("SOYF", SOYBEANS, 1);
-	/** SPX500. */
-	public static final FxcmInstrument SPX500 = new FxcmInstrument("SPX500", SP_500, 1);
-	/** UKOil. */
-	public static final FxcmInstrument UKOIL = new FxcmInstrument("UKOil", BRENT_CRUDE_OIL, 4);
-	/** USDOLLAR. */
-	public static final FxcmInstrument USDOLLAR = new FxcmInstrument("USDOLLAR", DOW_JONES_30, 1);
+	/** WHEATF. */
+	public static final FxcmInstrument WHEATF = new FxcmInstrument("WHEATF", WHEAT, 1);
+	/** CORNF. */
+	public static final FxcmInstrument CORNF = new FxcmInstrument("CORNF", CORN, 1);
 	
 	private static final Map<String, FxcmInstrument> cache = populateCache();
 
