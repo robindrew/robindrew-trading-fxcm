@@ -24,8 +24,8 @@ public class FxcmStreamingTest {
 	@Test
 	public void connect() throws Exception {
 
-		String username = getProperty("username");
-		String password = getProperty("password");
+		String username = getProperty("fxcm.username");
+		String password = getProperty("fxcm.password");
 
 		FxcmCredentials credentials = new FxcmCredentials(username, password);
 		FxcmEnvironment environment = DEMO;

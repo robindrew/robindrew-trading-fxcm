@@ -5,6 +5,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -42,6 +43,7 @@ public class FxcmJavaService implements IFxcmJavaService {
 	private final FxcmGateway gateway;
 	private final ITransactionLog transactionLog;
 	private final AtomicBoolean loggedIn = new AtomicBoolean(false);
+	private final Set<IFxcmInstrument> instruments = new CopyOnWriteArraySet<>();
 
 	public FxcmJavaService(IFxcmSession session, FxcmGateway gateway, ITransactionLog transactionLog) {
 		this.session = Check.notNull("session", session);
@@ -63,7 +65,21 @@ public class FxcmJavaService implements IFxcmJavaService {
 	public void login() {
 		new LoginCommand(session).execute(gateway);
 		loggedIn.set(true);
-		getTradingSessionStatus();
+		TradingSessionStatus status = getTradingSessionStatus();
+
+		List<TradingSecurity> securities = getSecurities(status);
+		for (TradingSecurity security : securities) {
+			try {
+				String symbol = security.getSymbol();
+				try {
+					FxcmInstrument.valueOf(symbol);
+				} catch (Exception e) {
+					log.warn("[Unsupported Instrument] {}", symbol);
+				}
+			} catch (Exception e) {
+				log.warn("Failed to get symbol for security: " + security, e);
+			}
+		}
 	}
 
 	@Override

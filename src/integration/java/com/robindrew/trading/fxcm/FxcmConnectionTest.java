@@ -30,8 +30,8 @@ public class FxcmConnectionTest {
 	@Test
 	public void connect() throws Exception {
 
-		String username = System.getProperty("username");
-		String password = System.getProperty("password");
+		String username = System.getProperty("fxcm.username");
+		String password = System.getProperty("fxcm.password");
 
 		FxcmCredentials credentials = new FxcmCredentials(username, password);
 		FxcmEnvironment environment = DEMO;

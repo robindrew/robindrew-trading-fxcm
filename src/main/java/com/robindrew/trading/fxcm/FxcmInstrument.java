@@ -191,7 +191,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** FRA40. */
 	public static final FxcmInstrument FRA40 = new FxcmInstrument("FRA40", CAC_40, 1);
 	/** GER30. */
-	public static final FxcmInstrument GER30 = new FxcmInstrument("GER30", DAX_30, 1);
+	public static final FxcmInstrument GER30 = new FxcmInstrument("GER30", DAX_30, 2);
 	/** HKG33. */
 	public static final FxcmInstrument HKG33 = new FxcmInstrument("HKG33", HANG_SENG_33, 1);
 	/** JPN225. */
