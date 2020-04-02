@@ -1,7 +1,7 @@
 package com.robindrew.trading.fxcm.platform.api.java.gateway;
 
 import com.robindrew.trading.fxcm.IFxcmInstrument;
-import com.robindrew.trading.price.candle.ITickPriceCandle;
+import com.robindrew.trading.price.candle.tick.ITickPriceCandle;
 
 public interface IFxcmGatewayTickHandler {
 

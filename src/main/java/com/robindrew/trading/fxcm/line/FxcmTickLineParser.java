@@ -10,8 +10,8 @@ import com.google.common.base.Charsets;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.TickPriceCandle;
 import com.robindrew.trading.price.candle.line.parser.IPriceCandleLineParser;
+import com.robindrew.trading.price.candle.tick.TickPriceCandle;
 import com.robindrew.trading.price.decimal.Decimals;
 import com.robindrew.trading.price.precision.IPricePrecision;
 

@@ -212,7 +212,7 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	/** EUSTX50. */
 	public static final FxcmInstrument EUSTX50 = new FxcmInstrument("EUSTX50", EURO_STOXX_50, 1);
 	/** FRA40. */
-	public static final FxcmInstrument FRA40 = new FxcmInstrument("FRA40", CAC_40, 1);
+	public static final FxcmInstrument FRA40 = new FxcmInstrument("FRA40", CAC_40, 2);
 	/** GER30. */
 	public static final FxcmInstrument GER30 = new FxcmInstrument("GER30", DAX_30, 2);
 	/** HKG33. */

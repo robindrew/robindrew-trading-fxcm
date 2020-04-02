@@ -30,8 +30,8 @@ import com.robindrew.common.text.tokenizer.CharDelimiters;
 import com.robindrew.common.text.tokenizer.CharTokenizer;
 import com.robindrew.common.util.Java;
 import com.robindrew.trading.fxcm.FxcmInstrument;
-import com.robindrew.trading.price.candle.ITickPriceCandle;
-import com.robindrew.trading.price.candle.TickPriceCandle;
+import com.robindrew.trading.price.candle.tick.ITickPriceCandle;
+import com.robindrew.trading.price.candle.tick.TickPriceCandle;
 import com.robindrew.trading.price.decimal.Decimals;
 
 public class FxcmTickFile {

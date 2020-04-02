@@ -19,7 +19,7 @@ import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.PriceCandle;
-import com.robindrew.trading.price.candle.TickPriceCandle;
+import com.robindrew.trading.price.candle.tick.TickPriceCandle;
 import com.robindrew.trading.trade.TradeDirection;
 
 public class FxcmJava {

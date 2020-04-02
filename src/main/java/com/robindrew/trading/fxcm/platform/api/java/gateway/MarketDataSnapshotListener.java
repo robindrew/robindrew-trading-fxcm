@@ -19,7 +19,7 @@ import com.robindrew.common.util.Check;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.ITickPriceCandle;
+import com.robindrew.trading.price.candle.tick.ITickPriceCandle;
 
 public class MarketDataSnapshotListener extends Thread implements AutoCloseable {
 

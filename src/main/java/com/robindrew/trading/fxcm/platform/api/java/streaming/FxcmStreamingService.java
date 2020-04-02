@@ -7,7 +7,7 @@ import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
 import com.robindrew.trading.platform.streaming.AbstractStreamingService;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
 import com.robindrew.trading.platform.streaming.InstrumentPriceStream;
-import com.robindrew.trading.price.candle.ITickPriceCandle;
+import com.robindrew.trading.price.candle.tick.ITickPriceCandle;
 
 public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrument> implements IFxcmStreamingService {
 
