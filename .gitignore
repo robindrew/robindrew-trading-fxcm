@@ -2,3 +2,5 @@
 /target/
 /.gradle/
 /.settings/
+/.classpath
+/.project
