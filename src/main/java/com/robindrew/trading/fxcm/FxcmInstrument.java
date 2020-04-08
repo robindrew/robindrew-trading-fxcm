@@ -19,6 +19,7 @@ import static com.robindrew.trading.Instruments.CORN;
 import static com.robindrew.trading.Instruments.DAX_30;
 import static com.robindrew.trading.Instruments.DE_BUND_10Y;
 import static com.robindrew.trading.Instruments.DOW_JONES_30;
+import static com.robindrew.trading.Instruments.EOS_USD;
 import static com.robindrew.trading.Instruments.ETH_USD;
 import static com.robindrew.trading.Instruments.EURO_STOXX_50;
 import static com.robindrew.trading.Instruments.EUR_AUD;
@@ -66,6 +67,7 @@ import static com.robindrew.trading.Instruments.US_CRUDE_OIL;
 import static com.robindrew.trading.Instruments.WHEAT;
 import static com.robindrew.trading.Instruments.XAG_USD;
 import static com.robindrew.trading.Instruments.XAU_USD;
+import static com.robindrew.trading.Instruments.XLM_USD;
 import static com.robindrew.trading.Instruments.XRP_USD;
 import static com.robindrew.trading.Instruments.ZAR_JPY;
 
@@ -177,6 +179,10 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 	public static final FxcmInstrument SPOT_BCH_USD = new FxcmInstrument("BCH/USD", BCH_USD, 1);
 	/** XRP/USD */
 	public static final FxcmInstrument SPOT_XRP_USD = new FxcmInstrument("XRP/USD", XRP_USD, 1);
+	/** EOS/USD */
+	public static final FxcmInstrument SPOT_EOS_USD = new FxcmInstrument("EOS/USD", EOS_USD, 1);
+	/** XLM/USD */
+	public static final FxcmInstrument SPOT_XLM_USD = new FxcmInstrument("XLM/USD", XLM_USD, 1);
 
 	/** XAU/USD. */
 	public static final FxcmInstrument SPOT_XAU_USD = new FxcmInstrument("XAU/USD", XAU_USD, 4);

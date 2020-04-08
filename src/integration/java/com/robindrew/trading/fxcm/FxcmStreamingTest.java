@@ -43,7 +43,7 @@ public class FxcmStreamingTest {
 		streaming.subscribe(instrument);
 
 		IInstrumentPriceStream<IFxcmInstrument> stream = streaming.getPriceStream(instrument);
-		IPriceCandleStreamSink sink = new PriceCandleLoggingStreamSink();
+		IPriceCandleStreamSink sink = new PriceCandleLoggingStreamSink(instrument);
 		stream.register(sink);
 
 		Threads.sleep(1, MINUTES);
