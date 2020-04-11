@@ -15,7 +15,7 @@ import com.robindrew.common.lang.Args;
 import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.line.FxcmCandleLineParser;
 import com.robindrew.trading.price.candle.IPriceCandle;
-import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileManager;
+import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileProviderLocator;
 import com.robindrew.trading.price.candle.format.pcf.source.file.PcfFileStreamSink;
 import com.robindrew.trading.price.candle.io.list.sink.IPriceCandleListSink;
 import com.robindrew.trading.price.candle.io.list.sink.PriceCandleListToStreamSink;
@@ -53,7 +53,7 @@ public class FxcmM1FileConverter {
 		log.info("Converting Instrument: {}", instrument);
 
 		// Output directory
-		File directory = PcfFileManager.getDirectory(outputDir, FXCM, instrument);
+		File directory = PcfFileProviderLocator.getDirectory(outputDir, FXCM, instrument);
 		directory.mkdirs();
 
 		try (IPriceCandleListSink sink = new PriceCandleListToStreamSink(new PcfFileStreamSink(directory))) {
