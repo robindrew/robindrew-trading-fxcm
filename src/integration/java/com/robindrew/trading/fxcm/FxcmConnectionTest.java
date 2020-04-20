@@ -1,6 +1,7 @@
 package com.robindrew.trading.fxcm;
 
 import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
+import static java.math.BigDecimal.ZERO;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class FxcmConnectionTest {
 		TradeDirection direction = TradeDirection.BUY;
 		CurrencyCode currency = CurrencyCode.GBP;
 		BigDecimal tradeSize = new BigDecimal("1000");
-		IPositionOrder order = new PositionOrder(instrument, direction, currency, tradeSize, 0, 0);
+		IPositionOrder order = new PositionOrder(instrument, direction, currency, tradeSize, ZERO, ZERO);
 		service.openPosition(order);
 
 		Threads.sleep(10, SECONDS);
