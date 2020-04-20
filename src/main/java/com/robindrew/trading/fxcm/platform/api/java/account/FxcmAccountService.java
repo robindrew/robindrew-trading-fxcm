@@ -9,8 +9,7 @@ import com.robindrew.trading.fxcm.platform.api.java.IFxcmJavaService;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.provider.ITradingProvider;
 import com.robindrew.trading.provider.TradingProvider;
-import com.robindrew.trading.trade.money.IMoney;
-import com.robindrew.trading.trade.money.Money;
+import com.robindrew.trading.trade.currency.Currency;
 
 public class FxcmAccountService implements IFxcmAccountService {
 
@@ -40,8 +39,8 @@ public class FxcmAccountService implements IFxcmAccountService {
 	}
 
 	@Override
-	public IMoney getBalance() {
+	public Currency getBalance() {
 		// TODO: Get correct currency code
-		return new Money(getAccount().getBalance(), GBP);
+		return new Currency(GBP, getAccount().getBalance());
 	}
 }
