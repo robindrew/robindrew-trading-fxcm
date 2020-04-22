@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import com.fxcm.fix.Parameter;
 import com.fxcm.fix.pretrade.TradingSessionStatus;
-import com.robindrew.common.json.Gsons;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
@@ -48,11 +47,6 @@ public class FxcmTradingTest {
 		FxcmJavaService service = new FxcmJavaService(session, gateway, transactionLog);
 		service.login();
 
-		TradingSessionStatus status = service.getTradingSessionStatus();
-		Parameter baseUnitSize = status.getParameter("BASE_UNIT_SIZE");
-		System.out.println(baseUnitSize.getValue());
-//		System.out.println(Gsons.prettyPrint(status));
-		
 		List<FxcmTradingAccount> accounts = service.getAccounts();
 		for (FxcmTradingAccount account : accounts) {
 			System.out.println(account);

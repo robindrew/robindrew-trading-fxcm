@@ -1,5 +1,7 @@
 package com.robindrew.trading.fxcm.platform.api.java.gateway;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,8 +104,8 @@ public class FxcmGateway {
 		transactions.log(method + "(" + type + ")", message);
 	}
 
-	public CollateralReport getLatestCollateralReport() {
-		return latestCollateralReport;
+	public Optional<CollateralReport> getLatestCollateralReport() {
+		return Optional.ofNullable(latestCollateralReport);
 	}
 
 	public void handleResponse(ITransportable response) {
