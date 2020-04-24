@@ -26,6 +26,7 @@ public class GetOpenPositionsCommand extends FxcmGatewayCommand<List<FxcmPositio
 
 			List<FxcmPosition> list = new ArrayList<>();
 			for (PositionReport report : positions.getReportList()) {
+
 				FxcmPosition position = new FxcmPosition(report);
 				log.info("{}", position);
 				list.add(position);

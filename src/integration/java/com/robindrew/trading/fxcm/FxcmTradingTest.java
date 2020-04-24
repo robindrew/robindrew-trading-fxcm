@@ -11,8 +11,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.fxcm.fix.Parameter;
-import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
@@ -25,8 +23,8 @@ import com.robindrew.trading.fxcm.platform.api.java.streaming.FxcmStreamingServi
 import com.robindrew.trading.log.ITransactionLog;
 import com.robindrew.trading.log.StubTransactionLog;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
+import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.position.order.PositionOrderBuilder;
-import com.robindrew.trading.price.candle.IPriceCandle;
 import com.robindrew.trading.price.candle.io.stream.sink.LatestPriceCandleSink;
 import com.robindrew.trading.price.candle.io.stream.sink.PriceCandleLoggingStreamSink;
 
@@ -56,6 +54,9 @@ public class FxcmTradingTest {
 		gateway.setTickHandler(streaming);
 
 		FxcmPositionService positions = new FxcmPositionService(service);
+		for (IPosition open : positions.getAllPositions()) {
+			positions.closePosition(open);
+		}
 
 		IFxcmInstrument instrument = FxcmInstrument.SPOT_GBP_USD;
 		streaming.subscribe(instrument);
@@ -70,7 +71,7 @@ public class FxcmTradingTest {
 		while (!latest.getLatestCandle().isPresent()) {
 			Thread.sleep(10);
 		}
-		IPriceCandle candle = latest.getLatestCandle().get();
+		// IPriceCandle candle = latest.getLatestCandle().get();
 
 		// Open a position
 
