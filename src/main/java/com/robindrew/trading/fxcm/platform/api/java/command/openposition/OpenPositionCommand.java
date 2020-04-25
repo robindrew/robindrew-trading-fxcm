@@ -1,6 +1,7 @@
 package com.robindrew.trading.fxcm.platform.api.java.command.openposition;
 
-import com.fxcm.external.api.util.MessageGenerator;
+import static com.fxcm.external.api.util.MessageGenerator.generateMarketOrder;
+
 import com.fxcm.fix.ISide;
 import com.fxcm.fix.trade.ExecutionReport;
 import com.fxcm.fix.trade.OrderSingle;
@@ -22,12 +23,12 @@ public class OpenPositionCommand extends FxcmGatewayCommand<Boolean> {
 	public Boolean executeCommand(FxcmGateway gateway) {
 
 		String account = gateway.getDefaultAccount();
-		double amount = 1000.0d;//order.getTradeSize().doubleValue();
+		double amount = 12500.0d;//order.getTradeSize().doubleValue();
 		ISide side = FxcmJava.toSide(order.getDirection());
 		String currency = order.getInstrument().getName();
-		OrderSingle open = MessageGenerator.generateMarketOrder(account, amount, side, currency, "Open new position");
+		OrderSingle marketOrder = generateMarketOrder(account, amount, side, currency, "Open new position");
 
-		ExecutionReport response = (ExecutionReport) gateway.execute(open);
+		ExecutionReport response = (ExecutionReport) gateway.execute(marketOrder);
 
 		// TODO: Handle response
 		System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(response));
