@@ -19,8 +19,8 @@ public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrume
 	}
 
 	@Override
-	public synchronized boolean subscribe(IFxcmInstrument instrument) {
-		if (isSubscribed(instrument)) {
+	public synchronized boolean subscribeToPrices(IFxcmInstrument instrument) {
+		if (isSubscribedInstrument(instrument)) {
 			return true;
 		}
 		if (service.subscribe(instrument)) {
@@ -37,13 +37,13 @@ public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrume
 	}
 
 	@Override
-	public synchronized boolean unsubscribe(IFxcmInstrument instrument) {
+	public synchronized boolean unsubscribeFromPrices(IFxcmInstrument instrument) {
 		return service.unsubscribe(instrument);
 	}
 
 	@Override
 	public void handleTick(IFxcmInstrument instrument, ITickPriceCandle candle) {
-		if (!isSubscribed(instrument)) {
+		if (!isSubscribedInstrument(instrument)) {
 			registerStream(instrument);
 		}
 

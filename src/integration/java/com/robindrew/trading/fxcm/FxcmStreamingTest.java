@@ -40,7 +40,7 @@ public class FxcmStreamingTest {
 		gateway.setTickHandler(streaming);
 
 		IFxcmInstrument instrument = FxcmInstrument.SPOT_GBP_USD;
-		streaming.subscribe(instrument);
+		streaming.subscribeToPrices(instrument);
 
 		IInstrumentPriceStream<IFxcmInstrument> stream = streaming.getPriceStream(instrument);
 		IPriceCandleStreamSink sink = new PriceCandleLoggingStreamSink(instrument);

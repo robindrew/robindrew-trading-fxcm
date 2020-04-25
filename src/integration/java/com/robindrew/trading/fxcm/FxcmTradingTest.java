@@ -11,8 +11,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.fxcm.fix.Parameter;
-import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmCredentials;
 import com.robindrew.trading.fxcm.platform.FxcmEnvironment;
@@ -49,23 +47,16 @@ public class FxcmTradingTest {
 
 		FxcmTradingPlatform platform = new FxcmTradingPlatform(service);
 
-		TradingSessionStatus status = service.getTradingSessionStatus();
-		Parameter baseUnitSize = status.getParameter("BASE_UNIT_SIZE");
-		System.out.println(baseUnitSize.getValue());
-//		System.out.println(Gsons.prettyPrint(status));
-		
 		List<FxcmTradingAccount> accounts = service.getAccounts();
 		for (FxcmTradingAccount account : accounts) {
 			System.out.println(account);
 		}
 
+		IFxcmInstrument instrument = FxcmInstrument.SPOT_GBP_USD;
+
 		IFxcmStreamingService streaming = platform.getStreamingService();
 		gateway.setTickHandler(streaming);
-
-		IFxcmPositionService positions = platform.getPositionService();
-
-		IFxcmInstrument instrument = FxcmInstrument.SPOT_GBP_USD;
-		streaming.subscribe(instrument);
+		streaming.subscribeToPrices(instrument);
 
 		IInstrumentPriceStream<IFxcmInstrument> stream = streaming.getPriceStream(instrument);
 		stream.register(new PriceCandleLoggingStreamSink(instrument));
@@ -81,6 +72,7 @@ public class FxcmTradingTest {
 
 		// Open a position
 
+		IFxcmPositionService positions = platform.getPositionService();
 		PositionOrderBuilder order = new PositionOrderBuilder();
 		order.instrument(instrument);
 		order.direction(BUY);
