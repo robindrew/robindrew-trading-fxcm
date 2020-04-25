@@ -5,7 +5,6 @@ import static com.robindrew.trading.fxcm.platform.api.java.FxcmJava.toBigDecimal
 import java.math.BigDecimal;
 
 import com.fxcm.fix.posttrade.CollateralReport;
-import com.google.gson.GsonBuilder;
 import com.robindrew.common.text.Strings;
 
 public class FxcmTradingAccount {

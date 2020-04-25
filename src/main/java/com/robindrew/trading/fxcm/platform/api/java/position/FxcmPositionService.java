@@ -6,12 +6,11 @@ import java.util.List;
 
 import com.robindrew.common.util.Check;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
-import com.robindrew.trading.fxcm.platform.api.java.command.openposition.OpenPositionCommand;
 import com.robindrew.trading.platform.positions.AbstractPositionService;
 import com.robindrew.trading.position.IPosition;
 import com.robindrew.trading.position.order.IPositionOrder;
 
-public class FxcmPositionService extends AbstractPositionService {
+public class FxcmPositionService extends AbstractPositionService implements IFxcmPositionService {
 
 	private final FxcmJavaService java;
 
