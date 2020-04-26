@@ -1,6 +1,6 @@
 package com.robindrew.trading.fxcm.platform.api.java;
 
-import static com.robindrew.trading.price.decimal.Decimals.toInt;
+import static com.robindrew.trading.price.decimal.Decimals.doubleToInt;
 import static com.robindrew.trading.trade.TradeDirection.BUY;
 import static com.robindrew.trading.trade.TradeDirection.SELL;
 import static java.math.RoundingMode.HALF_UP;
@@ -33,16 +33,16 @@ public class FxcmJava {
 		int decimalPlaces = instrument.getPrecision().getDecimalPlaces();
 
 		// Bid Prices
-		int bidOpenPrice = toInt(snapshot.getBidOpen(), decimalPlaces);
-		int bidHighPrice = toInt(snapshot.getBidHigh(), decimalPlaces);
-		int bidLowPrice = toInt(snapshot.getBidLow(), decimalPlaces);
-		int bidClosePrice = toInt(snapshot.getBidClose(), decimalPlaces);
+		int bidOpenPrice = doubleToInt(snapshot.getBidOpen(), decimalPlaces);
+		int bidHighPrice = doubleToInt(snapshot.getBidHigh(), decimalPlaces);
+		int bidLowPrice = doubleToInt(snapshot.getBidLow(), decimalPlaces);
+		int bidClosePrice = doubleToInt(snapshot.getBidClose(), decimalPlaces);
 
 		// Ask Prices
-		int askOpenPrice = toInt(snapshot.getAskOpen(), decimalPlaces);
-		int askHighPrice = toInt(snapshot.getAskHigh(), decimalPlaces);
-		int askLowPrice = toInt(snapshot.getAskLow(), decimalPlaces);
-		int askClosePrice = toInt(snapshot.getAskClose(), decimalPlaces);
+		int askOpenPrice = doubleToInt(snapshot.getAskOpen(), decimalPlaces);
+		int askHighPrice = doubleToInt(snapshot.getAskHigh(), decimalPlaces);
+		int askLowPrice = doubleToInt(snapshot.getAskLow(), decimalPlaces);
+		int askClosePrice = doubleToInt(snapshot.getAskClose(), decimalPlaces);
 
 		// Timestamps (UTC)
 		long openTime = snapshot.getOpenTimestamp().getTime();
