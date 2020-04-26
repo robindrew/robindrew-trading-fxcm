@@ -79,13 +79,12 @@ import com.robindrew.common.lang.reflect.field.IField;
 import com.robindrew.common.lang.reflect.field.IFieldLister;
 import com.robindrew.common.util.Check;
 import com.robindrew.trading.IInstrument;
-import com.robindrew.trading.Instrument;
-import com.robindrew.trading.price.precision.IPricePrecision;
 import com.robindrew.trading.price.precision.PricePrecision;
 import com.robindrew.trading.provider.ITradingProvider;
 import com.robindrew.trading.provider.TradingProvider;
+import com.robindrew.trading.provider.TradingInstrument;
 
-public class FxcmInstrument extends Instrument implements IFxcmInstrument {
+public class FxcmInstrument extends TradingInstrument implements IFxcmInstrument {
 
 	/** AUD/USD. */
 	public static final FxcmInstrument SPOT_AUD_USD = new FxcmInstrument("AUD/USD", AUD_USD, 6);
@@ -268,21 +267,13 @@ public class FxcmInstrument extends Instrument implements IFxcmInstrument {
 		return instrument;
 	}
 
-	private final IPricePrecision precision;
-
 	public FxcmInstrument(String name, IInstrument underlying, int decimalPlaces) {
-		super(name, underlying);
-		this.precision = new PricePrecision(decimalPlaces);
+		super(name, underlying, new PricePrecision(decimalPlaces));
 	}
 
 	@Override
 	public String getSymbol() {
 		return getName();
-	}
-
-	@Override
-	public IPricePrecision getPrecision() {
-		return precision;
 	}
 
 	@Override
