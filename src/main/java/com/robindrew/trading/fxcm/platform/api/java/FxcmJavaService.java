@@ -269,4 +269,9 @@ public class FxcmJavaService implements IFxcmJavaService {
 		}
 	}
 
+	@Override
+	public FxcmGateway getGateway() {
+		return gateway;
+	}
+
 }

@@ -16,6 +16,9 @@ public class FxcmStreamingService extends AbstractStreamingService<IFxcmInstrume
 	public FxcmStreamingService(FxcmJavaService service) {
 		super(FXCM);
 		this.service = service;
+		
+		// Register with the gateway
+		service.getGateway().setTickHandler(this);
 	}
 
 	@Override

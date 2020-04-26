@@ -7,6 +7,7 @@ import com.fxcm.fix.pretrade.TradingSessionStatus;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
+import com.robindrew.trading.fxcm.platform.api.java.gateway.FxcmGateway;
 import com.robindrew.trading.log.ITransactionLog;
 
 public interface IFxcmJavaService {
@@ -32,5 +33,7 @@ public interface IFxcmJavaService {
 	List<FxcmTradingAccount> getAccounts();
 
 	boolean isLoggedIn();
+
+	FxcmGateway getGateway();
 
 }
