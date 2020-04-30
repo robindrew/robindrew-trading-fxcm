@@ -5,7 +5,6 @@ import static com.fxcm.external.api.util.MessageGenerator.generateCloseMarketOrd
 import com.fxcm.fix.ISide;
 import com.fxcm.fix.trade.ExecutionReport;
 import com.fxcm.fix.trade.OrderSingle;
-import com.robindrew.common.text.Strings;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJava;
 import com.robindrew.trading.fxcm.platform.api.java.command.FxcmGatewayCommand;
 import com.robindrew.trading.fxcm.platform.api.java.command.getopenpositions.FxcmPosition;

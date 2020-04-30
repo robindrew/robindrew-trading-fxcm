@@ -3,7 +3,6 @@ package com.robindrew.trading.fxcm;
 import static com.robindrew.common.locale.CurrencyCode.GBP;
 import static com.robindrew.trading.position.order.PositionOrderBuilder.orderBuilder;
 import static com.robindrew.trading.trade.TradeDirection.BUY;
-import static java.util.concurrent.TimeUnit.MINUTES;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Stopwatch;
-import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmTradingPlatform;
 import com.robindrew.trading.fxcm.platform.FxcmTradingPlatformBuilder;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
