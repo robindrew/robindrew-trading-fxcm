@@ -23,6 +23,7 @@ import com.robindrew.trading.fxcm.FxcmInstrument;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
 import com.robindrew.trading.fxcm.platform.IFxcmSession;
 import com.robindrew.trading.fxcm.platform.api.java.command.closeposition.ClosePositionCommand;
+import com.robindrew.trading.fxcm.platform.api.java.command.closeposition.FxcmClosedPosition;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTradingAccount;
 import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.GetAccountsCommand;
 import com.robindrew.trading.fxcm.platform.api.java.command.getopenpositions.FxcmPosition;
@@ -137,14 +138,14 @@ public class FxcmJavaService implements IFxcmJavaService {
 		return new TradingSessionStatusCommand().execute(gateway);
 	}
 
-	public void openPosition(IPositionOrder order) {
+	public FxcmPosition openPosition(IPositionOrder order) {
 		checkLoggedIn();
-		new OpenPositionCommand(order).execute(gateway);
+		return new OpenPositionCommand(order).execute(gateway);
 	}
 
-	public void closePosition(FxcmPosition position) {
+	public FxcmClosedPosition closePosition(FxcmPosition position) {
 		checkLoggedIn();
-		new ClosePositionCommand(position).execute(gateway);
+		return new ClosePositionCommand(position).execute(gateway);
 	}
 
 	@Override

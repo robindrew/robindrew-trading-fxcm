@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fxcm.fix.posttrade.PositionReport;
+import com.fxcm.fix.trade.ExecutionReport;
 import com.robindrew.common.locale.CurrencyCode;
 import com.robindrew.common.text.Strings;
 import com.robindrew.trading.fxcm.IFxcmInstrument;
@@ -35,6 +36,18 @@ public class FxcmPosition implements IPosition {
 		this.openPrice = toBigDecimal(report.getSettlPrice());
 		this.tradeSize = toBigDecimal(report.getPositionQty().getQty());
 		this.direction = toDirection(report.getPositionQty().getSide());
+		// TODO: Parse stop and limit if available?
+	}
+
+	public FxcmPosition(ExecutionReport report) {
+		this.id = report.getFXCMPosID();
+		this.account = report.getAccount();
+		this.currency = CurrencyCode.valueOf(report.getCurrency());
+		this.openDate = toLocalDateTime(report.getTransactTime());
+		this.instrument = toFxcmInstrument(report.getInstrument());
+		this.openPrice = toBigDecimal(report.getPrice());
+		this.tradeSize = toBigDecimal(report.getOrderQty());
+		this.direction = toDirection(report.getSide());
 		// TODO: Parse stop and limit if available?
 	}
 

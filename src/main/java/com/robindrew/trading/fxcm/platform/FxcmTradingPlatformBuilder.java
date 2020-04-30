@@ -4,6 +4,7 @@ import static com.robindrew.common.test.UnitTests.getProperty;
 import static com.robindrew.trading.fxcm.platform.FxcmEnvironment.DEMO;
 
 import com.google.common.base.Supplier;
+import com.robindrew.common.util.Check;
 import com.robindrew.trading.fxcm.platform.api.java.FxcmJavaService;
 import com.robindrew.trading.fxcm.platform.api.java.gateway.FxcmGateway;
 import com.robindrew.trading.log.ITransactionLog;
@@ -17,19 +18,19 @@ public class FxcmTradingPlatformBuilder implements Supplier<FxcmTradingPlatform>
 	private ITransactionLog transactionLog = new StubTransactionLog();
 
 	public void username(String username) {
-		this.username = username;
+		this.username = Check.notEmpty("username", username);
 	}
 
 	public void password(String password) {
-		this.password = password;
+		this.password = Check.notEmpty("password", password);
 	}
 
 	public void environment(FxcmEnvironment environment) {
-		this.environment = environment;
+		this.environment = Check.notNull("environment", environment);
 	}
 
-	public void transactionLog(ITransactionLog transactionLog) {
-		this.transactionLog = transactionLog;
+	public void transactionLog(ITransactionLog log) {
+		this.transactionLog = Check.notNull("log", log);
 	}
 
 	@Override

@@ -1,14 +1,18 @@
 package com.robindrew.trading.fxcm;
 
 import static com.robindrew.common.locale.CurrencyCode.GBP;
+import static com.robindrew.trading.position.order.PositionOrderBuilder.orderBuilder;
 import static com.robindrew.trading.trade.TradeDirection.BUY;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.robindrew.common.util.Threads;
 import com.robindrew.trading.fxcm.platform.FxcmTradingPlatform;
 import com.robindrew.trading.fxcm.platform.FxcmTradingPlatformBuilder;
@@ -16,16 +20,19 @@ import com.robindrew.trading.fxcm.platform.api.java.command.getaccounts.FxcmTrad
 import com.robindrew.trading.fxcm.platform.api.java.position.IFxcmPositionService;
 import com.robindrew.trading.fxcm.platform.api.java.streaming.IFxcmStreamingService;
 import com.robindrew.trading.platform.streaming.IInstrumentPriceStream;
-import com.robindrew.trading.position.order.PositionOrderBuilder;
+import com.robindrew.trading.position.IPosition;
+import com.robindrew.trading.position.order.IPositionOrder;
 import com.robindrew.trading.price.candle.io.stream.sink.LatestPriceCandleSink;
 import com.robindrew.trading.price.candle.io.stream.sink.PriceCandleLoggingStreamSink;
 
 public class FxcmTradingTest {
 
+	private static final Logger log = LoggerFactory.getLogger(FxcmTradingTest.class);
+
 	@Test
 	public void connect() throws Exception {
 
-		IFxcmInstrument instrument = FxcmInstrument.SPOT_GBP_USD;
+		IFxcmInstrument instrument = FxcmInstrument.SPOT_AUD_USD;
 
 		FxcmTradingPlatform platform = new FxcmTradingPlatformBuilder().get();
 
@@ -50,15 +57,20 @@ public class FxcmTradingTest {
 		// IPriceCandle candle = latest.getLatestCandle().get();
 
 		// Open a position
-
 		IFxcmPositionService positions = platform.getPositionService();
-		PositionOrderBuilder order = new PositionOrderBuilder();
-		order.instrument(instrument);
-		order.direction(BUY);
-		order.tradeCurrency(GBP);
-		order.tradeSize(new BigDecimal("0.1"));
-		positions.openPosition(order.build());
 
-		Threads.sleep(1, MINUTES);
+		List<IPosition> positionList = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			Stopwatch timer = Stopwatch.createStarted();
+			IPositionOrder order = orderBuilder().instrument(instrument).direction(BUY).tradeCurrency(GBP).tradeSize(1000).build();
+			IPosition position = positions.openPosition(order);
+			positionList.add(position);
+			timer.stop();
+			log.info("Position {} opened in {}", position.getId(), timer);
+		}
+
+		for (IPosition position : positionList) {
+			positions.closePosition(position);
+		}
 	}
 }

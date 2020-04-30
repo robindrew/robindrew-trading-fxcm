@@ -1,0 +1,152 @@
+{
+  "mLifeTime": 5,
+  "mCumQty": 0.0,
+  "mCurrency": "AUD",
+  "mExecID": "376010369",
+  "mExecType": {
+    "mMode": 9,
+    "msCode": "0",
+    "msDesc": "NEW",
+    "msLabel": "NEW"
+  },
+  "mFXCMOrdStatus": {
+    "mMode": 1,
+    "msCode": "P",
+    "msDesc": "In process",
+    "msLabel": "In process"
+  },
+  "mFXCMOrdType": {
+    "msCode": "CM",
+    "msDesc": "Close Market",
+    "msLabel": "Close Market"
+  },
+  "mFXCMPosID": "118511429",
+  "mFXCMRequestRejectReason": -1,
+  "mLastPx": 0.65094,
+  "mLastQty": 0.0,
+  "mLastRptRequested": true,
+  "mLeavesQty": 1000.0,
+  "mOrderPercent": 0.0,
+  "mOrderQty": 1000.0,
+  "mOrdStatus": {
+    "mMode": 9,
+    "msCode": "0",
+    "msDesc": "NEW",
+    "msLabel": "NEW"
+  },
+  "mOrdType": {
+    "msCode": "1",
+    "msDesc": "Market",
+    "msLabel": "Market"
+  },
+  "mPegInstruction": {
+    "mFXCMPegFluctuatePts": 0,
+    "mPegMoveType": 0,
+    "mPegOffsetType": 0,
+    "mPegOffsetValue": 0.0,
+    "mPegPriceType": 0
+  },
+  "mPrice": 0.65094,
+  "mSide": {
+    "msCode": "2",
+    "msDesc": "Sell",
+    "msLabel": "Sell"
+  },
+  "mStopPx": 0.0,
+  "mTimeInForce": {
+    "msCode": "1",
+    "msDesc": "GTC",
+    "msLabel": "GTC"
+  },
+  "mTotNumReports": 0,
+  "mAccount": "00786509",
+  "mOrderID": "206554783",
+  "mClOrdID": "GBDEMO_9D7A1B9779D37F20E053E12B3C0A0F16_04302020211717476578_MYM-21",
+  "mSecondaryClOrdID": "Completely close position",
+  "mInstrument": {
+    "mAskAdjustment": -8.0E-5,
+    "mBidAdjustment": 7.0E-5,
+    "mPriceStream": {
+      "mID": 1,
+      "mName": "Default"
+    },
+    "mCurrency": "AUD",
+    "mRoundLot": 1.0,
+    "mFXCMSymInterestBuy": -0.0448,
+    "mFXCMSymInterestSell": 0.004,
+    "mFXCMSubscriptionStatus": "T",
+    "mContractMultiplier": 1.0,
+    "mFactor": 1,
+    "mFXCMCondDistEntryLimit": 0.0,
+    "mFXCMCondDistEntryStop": 0.0,
+    "mFXCMCondDistLimit": 0.0,
+    "mFXCMCondDistStop": 0.0,
+    "mFXCMMaxQuantity": 5.0E7,
+    "mFXCMMinQuantity": 1.0,
+    "mFXCMProductID": 1,
+    "mFXCMSymID": 6,
+    "mFXCMSymPointSize": 1.0E-4,
+    "mFXCMSymPrecision": 5,
+    "mFXCMSymSortOrder": 1350,
+    "mFXCMTradingStatus": "O",
+    "mProduct": 4,
+    "mSymbol": "AUD/USD",
+    "mTouchTime": 0
+  },
+  "mParties": {
+    "mParties": [
+      {
+        "mPartyId": "FXCM ID",
+        "mPartyIdSource": "D",
+        "mPartyRole": "3",
+        "mSubParties": {
+          "10": {
+            "mPartySubID": "786509",
+            "mPartySubIDType": "10"
+          },
+          "2": {
+            "mPartySubID": "d25787237",
+            "mPartySubIDType": "2"
+          },
+          "22": {
+            "mPartySubID": "DREW",
+            "mPartySubIDType": "22"
+          },
+          "26": {
+            "mPartySubID": "32",
+            "mPartySubIDType": "26"
+          }
+        }
+      }
+    ],
+    "mFXCMParty": {
+      "mPartyId": "FXCM ID",
+      "mPartyIdSource": "D",
+      "mPartyRole": "3",
+      "mSubParties": {
+        "10": {
+          "mPartySubID": "786509",
+          "mPartySubIDType": "10"
+        },
+        "2": {
+          "mPartySubID": "d25787237",
+          "mPartySubIDType": "2"
+        },
+        "22": {
+          "mPartySubID": "DREW",
+          "mPartySubIDType": "22"
+        },
+        "26": {
+          "mPartySubID": "32",
+          "mPartySubIDType": "26"
+        }
+      }
+    }
+  },
+  "mTradingSessionID": "FXCM",
+  "mTradingSessionSubID": "GBDEMO",
+  "mTransactTime": {
+    "mlTimestamp": 1588281453459
+  },
+  "mMakingTime": 1588281454394
+}

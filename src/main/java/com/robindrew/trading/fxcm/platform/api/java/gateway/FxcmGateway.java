@@ -109,12 +109,13 @@ public class FxcmGateway {
 	}
 
 	public void handleResponse(ITransportable response) {
+		logMessage("Response", response);
+
 		try {
 			String requestId = response.getRequestID();
 
 			// Is this message a request/response
 			if (requestId != null) {
-				logMessage("Response", response);
 				responseCache.put(requestId, response);
 				return;
 			}
@@ -131,13 +132,12 @@ public class FxcmGateway {
 			// How should we handle published Collateral Reports?
 			// These occur after opening or closing a position (possibly other actions too)
 			if (response instanceof CollateralReport) {
-				// TODO: Handling reports
 				latestCollateralReport = (CollateralReport) response;
+				return;
 			}
 
-			// Log unhandled messages so we can review them
-			logMessage("Published", response);
-			log.warn("Published message not handled: " + response);
+			// Warning of unhandled messages
+			log.warn("[Unhandled Response] " + response);
 
 		} catch (Exception e) {
 			throw Java.propagate(e);
@@ -145,16 +145,16 @@ public class FxcmGateway {
 	}
 
 	public void handleStatus(ISessionStatus status) {
-		if (log.isDebugEnabled()) {
-			log.debug("Status Message: ({}) '{}'", status.getStatusCode(), status.getStatusMessage());
-		}
+		logMessage("Status", status);
 	}
 
 	private class ResponseListener implements IGenericMessageListener {
 
 		@Override
 		public void messageArrived(ITransportable message) {
-			handleResponse(message);
+			if (message != null) {
+				handleResponse(message);
+			}
 		}
 	}
 
@@ -162,7 +162,9 @@ public class FxcmGateway {
 
 		@Override
 		public void messageArrived(ISessionStatus message) {
-			handleStatus(message);
+			if (message != null) {
+				handleStatus(message);
+			}
 		}
 	}
 

@@ -1,0 +1,128 @@
+{
+  "mCumQty": 0.0,
+  "mCurrency": "GBP",
+  "mExecID": "0",
+  "mExecType": {
+    "mMode": 6,
+    "msCode": "8",
+    "msDesc": "REJECTED",
+    "msLabel": "REJECTED"
+  },
+  "mFXCMErrorDetails": "19915;DAS 19915: ZDas Exception ORA-20173: Quantity fraction size violated: 1000.",
+  "mFXCMOrdStatus": {
+    "mMode": 6,
+    "msCode": "R",
+    "msDesc": "Rejected",
+    "msLabel": "Rejected"
+  },
+  "mFXCMRequestRejectReason": 0,
+  "mLastPx": 0.0,
+  "mLastQty": 0.0,
+  "mLastRptRequested": true,
+  "mLeavesQty": 0.0,
+  "mOrderPercent": 0.0,
+  "mOrderQty": 12500.0,
+  "mOrdRejReason": {
+    "msCode": "99",
+    "msDesc": "Other",
+    "msLabel": "Other"
+  },
+  "mOrdStatus": {
+    "mMode": 6,
+    "msCode": "8",
+    "msDesc": "REJECTED",
+    "msLabel": "REJECTED"
+  },
+  "mOrdType": {
+    "msCode": "1",
+    "msDesc": "Market",
+    "msLabel": "Market"
+  },
+  "mPegInstruction": {
+    "mFXCMPegFluctuatePts": 0,
+    "mPegMoveType": 0,
+    "mPegOffsetType": 0,
+    "mPegOffsetValue": 0.0,
+    "mPegPriceType": 0
+  },
+  "mPrice": 0.0,
+  "mSide": {
+    "msCode": "1",
+    "msDesc": "Buy",
+    "msLabel": "Buy"
+  },
+  "mStopPx": 0.0,
+  "mText": "19915;DAS 19915: ZDas Exception ORA-20173: Quantity fraction size violated: 1000.",
+  "mTimeInForce": {
+    "msCode": "1",
+    "msDesc": "GTC",
+    "msLabel": "GTC"
+  },
+  "mTotNumReports": 0,
+  "mAccount": "00786509",
+  "mOrderID": "NONE",
+  "mClOrdID": "GBDEMO_9D79F383E4B17F22E053E12B3C0AF8F8_04272020121603115128_I1F-18",
+  "mSecondaryClOrdID": "Open new position",
+  "mInstrument": {
+    "mAskAdjustment": -8.0E-5,
+    "mBidAdjustment": 7.0E-5,
+    "mPriceStream": {
+      "mID": 1,
+      "mName": "Default"
+    },
+    "mCurrency": "GBP",
+    "mRoundLot": 1.0,
+    "mFXCMSymInterestBuy": -0.0162,
+    "mFXCMSymInterestSell": 8.0E-4,
+    "mFXCMSubscriptionStatus": "T",
+    "mContractMultiplier": 1.0,
+    "mFactor": 1,
+    "mFXCMCondDistEntryLimit": 0.0,
+    "mFXCMCondDistEntryStop": 0.0,
+    "mFXCMCondDistLimit": 0.0,
+    "mFXCMCondDistStop": 0.0,
+    "mFXCMMaxQuantity": 5.0E7,
+    "mFXCMMinQuantity": 1.0,
+    "mFXCMProductID": 1,
+    "mFXCMSymID": 3,
+    "mFXCMSymPointSize": 1.0E-4,
+    "mFXCMSymPrecision": 5,
+    "mFXCMSymSortOrder": 250,
+    "mFXCMTradingStatus": "O",
+    "mProduct": 4,
+    "mSymbol": "GBP/USD",
+    "mTouchTime": 0
+  },
+  "mParties": {
+    "mParties": [
+      {
+        "mPartyId": "FXCM ID",
+        "mPartyIdSource": "D",
+        "mPartyRole": "3",
+        "mSubParties": {
+          "10": {
+            "mPartySubID": "786509",
+            "mPartySubIDType": "10"
+          }
+        }
+      }
+    ],
+    "mFXCMParty": {
+      "mPartyId": "FXCM ID",
+      "mPartyIdSource": "D",
+      "mPartyRole": "3",
+      "mSubParties": {
+        "10": {
+          "mPartySubID": "786509",
+          "mPartySubIDType": "10"
+        }
+      }
+    }
+  },
+  "mTradingSessionID": "FXCM",
+  "mTradingSessionSubID": "GBDEMO",
+  "mTransactTime": {
+    "mlTimestamp": 1587989775273
+  },
+  "mMakingTime": 1587989775273
+}
